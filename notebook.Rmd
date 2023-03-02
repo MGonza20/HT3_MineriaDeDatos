@@ -1,0 +1,22 @@
+---
+title: "notebook"
+output: html_document
+date: "2023-03-02"
+---
+
+# Hoja de trabajo 03 - Regresión Lineal
+
+
+```{r cars}
+data <- read.csv("train.csv")
+```
+
+
+## Análisis Exploratorio
+
+
+
+### ¿Cómo cambia el promedio de venta de una propiedad en la misma zona a través de los años?
+### ¿En qué vecindario se ubican las casas con mayor área en su terreno?
+### ¿En qué año hubo más remodelaciones?
+### ¿Cuáles son los materiales más utilizados para la fundación de las casas?
