@@ -4,7 +4,14 @@ output: html_document
 date: "2023-03-02"
 ---
 
+
 # Hoja de trabajo 03 - Regresión Lineal
+
+```{r libraries}
+library(dplyr)
+library(knitr)
+library(ggplot2)
+```
 
 
 ```{r cars}
@@ -17,6 +24,66 @@ data <- read.csv("train.csv")
 
 
 ### ¿Cómo cambia el promedio de venta de una propiedad en la misma zona a través de los años?
+
+``` {r average_price_per_zone}
+grouped_data <- data %>% group_by(MSZoning)
+agg_tbl <- grouped_data %>% summarise(mean(SalePrice))
+grouped_dataset <- as.data.frame(agg_tbl)
+colnames(grouped_dataset)[colnames(grouped_dataset) == "MSZoning"] ="Zona"
+colnames(grouped_dataset)[colnames(grouped_dataset) == "mean(SalePrice)"] ="Promedio de Precio (USD)"
+grouped_dataset <- grouped_dataset[order(grouped_dataset$`Promedio de Precio (USD)`, decreasing = FALSE), ]
+kable(grouped_dataset, caption = "Promedio de ventas por cada zona")
+```
+
 ### ¿En qué vecindario se ubican las casas con mayor área en su terreno?
+``` {r area_per_neighborhood}
+grouped_area_data <- data %>% group_by(Neighborhood)
+area_with_median <- grouped_area_data %>% summarise(median(LotArea))
+grouped_dataset_lot <- as.data.frame(area_with_median)
+colnames(grouped_dataset_lot)[colnames(grouped_dataset_lot) == "Neighborhood"] ="Vecindario"
+colnames(grouped_dataset_lot)[colnames(grouped_dataset_lot) == "median(LotArea)"] ="Area del terreno ft^2"
+grouped_dataset_lot <- grouped_dataset_lot[order(grouped_dataset_lot$`Area del terreno ft^2`, decreasing = TRUE), ]
+kable(grouped_dataset_lot[0:5,], caption = "Mediana de area por cada vecindario")
+```
+
+``` {r plot_area_per_neighborhood}
+ggplot(grouped_dataset_lot[0:5,], aes(x=Vecindario, y=`Area del terreno ft^2`)) +
+geom_bar(stat="identity", fill="steelblue") 
+```
+
+La información nos demuestra que Clear Creek es el vecindario que tiene los terrenos con mayor área. Un 50% de los terrenos tiene un área mayor a 17575.0 pies cuadrados.
+
 ### ¿En qué año hubo más remodelaciones?
+
+```{r remodelation_by_year}
+data_with_remodelation <- data[data$YearBuilt != data$YearRemodAdd,]
+```
+En el dataset hay `r nrow(data_with_remodelation)` registros de casas que fueron remodeladas. A continuación agrupamos por año
+
+```{r group_remodelation_by_year}
+grouped_remodelation_data <- data_with_remodelation %>% group_by(YearRemodAdd)
+year_with_count <- grouped_remodelation_data %>% summarise(total_count=n(),
+            .groups = 'drop')
+
+grouped_remodelation <- as.data.frame(year_with_count)
+colnames(grouped_remodelation)[colnames(grouped_remodelation) == "YearRemoAdd"] ="Año"
+colnames(grouped_remodelation)[colnames(grouped_remodelation) == "total_count"] ="Cantidad de casas remodeladas"
+grouped_remodelation <- grouped_remodelation[order(grouped_remodelation$`Cantidad de casas remodeladas`, decreasing = TRUE), ]
+kable(grouped_remodelation[0:5,], caption = "Numero de casas Remodeladas por año")
+
+```
+
+Los 5 años con más casas remodeladas son 1950, 2006, 2007, 2005 y 2000 respectivamente. Es importante notar que en 1950 hay mucha más diferencia que con los demás años.
+
+``` {r}
+most_remodelated_zone_1950 <- tail(names(sort(table(data_with_remodelation[data_with_remodelation$YearRemodAdd == "1950",]$MSZoning))), 1)
+
+most_remodelated_zone_2006 <- tail(names(sort(table(data_with_remodelation[data_with_remodelation$YearRemodAdd == "2006",]$MSZoning))), 1)
+
+most_remodelated_zone_2007 <- tail(names(sort(table(data_with_remodelation[data_with_remodelation$YearRemodAdd == "2007",]$MSZoning))), 1)
+
+```
+
+La mayoría de las remodelaciones pertenecen a la zona `RL - Residencial de baja densidad`. 
+
 ### ¿Cuáles son los materiales más utilizados para la fundación de las casas?
