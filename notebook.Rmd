@@ -130,7 +130,7 @@ agg_tbl <- grouped_data %>% summarise(mean(SalePrice))
 grouped_dataset <- as.data.frame(agg_tbl)
 colnames(grouped_dataset)[colnames(grouped_dataset) == "Neighborhood"] ="Vecindario"
 colnames(grouped_dataset)[colnames(grouped_dataset) == "mean(SalePrice)"] ="Promedio de Precio (USD)"
-grouped_dataset <- grouped_dataset[order(grouped_dataset$Vecindario, decreasing = FALSE), ]
+grouped_dataset <- grouped_dataset[order(grouped_dataset$`Promedio de Precio (USD)`, decreasing = TRUE), ]
 kable(grouped_dataset, caption = "Promedio de ventas por cada vecindario")
 ```
 
