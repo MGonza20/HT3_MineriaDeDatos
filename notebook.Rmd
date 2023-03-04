@@ -103,3 +103,15 @@ kable(grouped_type[0:5,], caption = "Conteo de tipo de casas")
 
 ```
 
+
+### ¿Cómo varia el precio de las casas según el vecindario en que se encuentran?
+```{r}
+grouped_data <- data %>% group_by(Neighborhood)
+agg_tbl <- grouped_data %>% summarise(mean(SalePrice))
+grouped_dataset <- as.data.frame(agg_tbl)
+colnames(grouped_dataset)[colnames(grouped_dataset) == "Neighborhood"] ="Vecindario"
+colnames(grouped_dataset)[colnames(grouped_dataset) == "mean(SalePrice)"] ="Promedio de Precio (USD)"
+grouped_dataset <- grouped_dataset[order(grouped_dataset$Vecindario, decreasing = FALSE), ]
+kable(grouped_dataset, caption = "Promedio de ventas por cada vecindario")
+```
+
