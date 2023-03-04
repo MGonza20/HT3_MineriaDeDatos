@@ -368,6 +368,7 @@ display: none;
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>library(knitr)
 library(ggplot2)</code></pre>
+<pre class="r"><code>options(dplyr.summarise.inform = FALSE)</code></pre>
 <pre class="r"><code>data &lt;- read.csv(&quot;train.csv&quot;)</code></pre>
 <div id="análisis-exploratorio" class="section level2">
 <h2>Análisis Exploratorio</h2>
@@ -415,6 +416,1020 @@ kable(grouped_dataset, caption = &quot;Promedio de ventas por cada zona&quot;)</
 <td align="left">2</td>
 <td align="left">FV</td>
 <td align="right">214014.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="propuesta-2" class="section level3">
+<h3>Propuesta 2</h3>
+<pre class="r"><code>grouped_data &lt;- data %&gt;% group_by(MSZoning, YearBuilt)
+agg_tbl &lt;- grouped_data %&gt;% summarise(mean(SalePrice))
+grouped_dataset &lt;- as.data.frame(agg_tbl)
+colnames(grouped_dataset)[colnames(grouped_dataset) == &quot;MSZoning&quot;] = &quot;Zona&quot;
+colnames(grouped_dataset)[colnames(grouped_dataset) == &quot;YearBuilt&quot;] = &quot;Año de Construcción&quot;
+colnames(grouped_dataset)[colnames(grouped_dataset) == &quot;mean(SalePrice)&quot;] = &quot;Promedio de Precio (USD)&quot;
+grouped_dataset &lt;- grouped_dataset[order(grouped_dataset$`Zona`, grouped_dataset$`Año de Construcción`, decreasing = FALSE), ]
+kable(grouped_dataset, caption = &quot;Promedio de ventas por cada zona y año de construcción&quot;)</code></pre>
+<table>
+<caption>Promedio de ventas por cada zona y año de
+construcción</caption>
+<thead>
+<tr class="header">
+<th align="left">Zona</th>
+<th align="right">Año de Construcción</th>
+<th align="right">Promedio de Precio (USD)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">C (all)</td>
+<td align="right">1900</td>
+<td align="right">102776.0</td>
+</tr>
+<tr class="even">
+<td align="left">C (all)</td>
+<td align="right">1910</td>
+<td align="right">133900.0</td>
+</tr>
+<tr class="odd">
+<td align="left">C (all)</td>
+<td align="right">1915</td>
+<td align="right">85000.0</td>
+</tr>
+<tr class="even">
+<td align="left">C (all)</td>
+<td align="right">1920</td>
+<td align="right">62825.0</td>
+</tr>
+<tr class="odd">
+<td align="left">C (all)</td>
+<td align="right">1935</td>
+<td align="right">81000.0</td>
+</tr>
+<tr class="even">
+<td align="left">C (all)</td>
+<td align="right">1949</td>
+<td align="right">35311.0</td>
+</tr>
+<tr class="odd">
+<td align="left">C (all)</td>
+<td align="right">1952</td>
+<td align="right">55993.0</td>
+</tr>
+<tr class="even">
+<td align="left">FV</td>
+<td align="right">1997</td>
+<td align="right">239000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">FV</td>
+<td align="right">1999</td>
+<td align="right">189133.3</td>
+</tr>
+<tr class="even">
+<td align="left">FV</td>
+<td align="right">2000</td>
+<td align="right">180800.0</td>
+</tr>
+<tr class="odd">
+<td align="left">FV</td>
+<td align="right">2001</td>
+<td align="right">226000.0</td>
+</tr>
+<tr class="even">
+<td align="left">FV</td>
+<td align="right">2003</td>
+<td align="right">240166.7</td>
+</tr>
+<tr class="odd">
+<td align="left">FV</td>
+<td align="right">2004</td>
+<td align="right">212616.7</td>
+</tr>
+<tr class="even">
+<td align="left">FV</td>
+<td align="right">2005</td>
+<td align="right">192305.8</td>
+</tr>
+<tr class="odd">
+<td align="left">FV</td>
+<td align="right">2006</td>
+<td align="right">214537.5</td>
+</tr>
+<tr class="even">
+<td align="left">FV</td>
+<td align="right">2007</td>
+<td align="right">236518.9</td>
+</tr>
+<tr class="odd">
+<td align="left">FV</td>
+<td align="right">2008</td>
+<td align="right">260833.3</td>
+</tr>
+<tr class="even">
+<td align="left">FV</td>
+<td align="right">2009</td>
+<td align="right">233353.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RH</td>
+<td align="right">1911</td>
+<td align="right">130000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RH</td>
+<td align="right">1914</td>
+<td align="right">200000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RH</td>
+<td align="right">1916</td>
+<td align="right">160000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RH</td>
+<td align="right">1925</td>
+<td align="right">121800.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RH</td>
+<td align="right">1928</td>
+<td align="right">76000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RH</td>
+<td align="right">1931</td>
+<td align="right">79000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RH</td>
+<td align="right">1932</td>
+<td align="right">159434.0</td>
+</tr>
+<tr class="even">
+<td align="left">RH</td>
+<td align="right">1946</td>
+<td align="right">145000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RH</td>
+<td align="right">1949</td>
+<td align="right">145000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RH</td>
+<td align="right">1950</td>
+<td align="right">82000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RH</td>
+<td align="right">1965</td>
+<td align="right">119900.0</td>
+</tr>
+<tr class="even">
+<td align="left">RH</td>
+<td align="right">1966</td>
+<td align="right">107000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RH</td>
+<td align="right">1977</td>
+<td align="right">144000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RH</td>
+<td align="right">1998</td>
+<td align="right">157000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1875</td>
+<td align="right">94000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1900</td>
+<td align="right">125230.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1908</td>
+<td align="right">183500.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1910</td>
+<td align="right">115333.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1912</td>
+<td align="right">127200.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1913</td>
+<td align="right">90350.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1914</td>
+<td align="right">88129.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1915</td>
+<td align="right">140715.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1916</td>
+<td align="right">156833.3</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1918</td>
+<td align="right">172421.4</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1919</td>
+<td align="right">174750.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1920</td>
+<td align="right">117818.2</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1921</td>
+<td align="right">153970.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1922</td>
+<td align="right">122350.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1923</td>
+<td align="right">178200.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1924</td>
+<td align="right">106480.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1925</td>
+<td align="right">152190.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1926</td>
+<td align="right">128100.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1927</td>
+<td align="right">64500.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1928</td>
+<td align="right">152333.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1929</td>
+<td align="right">230000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1930</td>
+<td align="right">91000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1931</td>
+<td align="right">149000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1932</td>
+<td align="right">258000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1934</td>
+<td align="right">273900.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1935</td>
+<td align="right">222666.7</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1936</td>
+<td align="right">172500.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1937</td>
+<td align="right">175000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1938</td>
+<td align="right">109875.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1939</td>
+<td align="right">170840.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1940</td>
+<td align="right">133525.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1941</td>
+<td align="right">134800.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1942</td>
+<td align="right">162000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1945</td>
+<td align="right">152625.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1946</td>
+<td align="right">115360.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1947</td>
+<td align="right">118250.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1948</td>
+<td align="right">140688.9</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1949</td>
+<td align="right">115790.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1950</td>
+<td align="right">129262.5</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1951</td>
+<td align="right">136600.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1952</td>
+<td align="right">123833.3</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1953</td>
+<td align="right">151181.8</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1954</td>
+<td align="right">143771.4</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1955</td>
+<td align="right">135792.9</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1956</td>
+<td align="right">138796.2</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1957</td>
+<td align="right">152054.6</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1958</td>
+<td align="right">143179.2</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1959</td>
+<td align="right">154124.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1960</td>
+<td align="right">161550.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1961</td>
+<td align="right">139846.4</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1962</td>
+<td align="right">145742.1</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1963</td>
+<td align="right">147103.6</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1964</td>
+<td align="right">161893.3</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1965</td>
+<td align="right">154560.1</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1966</td>
+<td align="right">162651.2</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1967</td>
+<td align="right">142337.5</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1968</td>
+<td align="right">166075.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1969</td>
+<td align="right">160725.6</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1970</td>
+<td align="right">163717.9</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1971</td>
+<td align="right">144446.9</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1972</td>
+<td align="right">154505.9</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1973</td>
+<td align="right">182300.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1974</td>
+<td align="right">183050.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1975</td>
+<td align="right">159268.8</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1976</td>
+<td align="right">170432.9</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1977</td>
+<td align="right">168951.7</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1978</td>
+<td align="right">164226.7</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1979</td>
+<td align="right">156396.9</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1980</td>
+<td align="right">176142.9</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1981</td>
+<td align="right">249880.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1982</td>
+<td align="right">132400.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1983</td>
+<td align="right">181400.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1984</td>
+<td align="right">164111.1</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1985</td>
+<td align="right">191400.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1986</td>
+<td align="right">212000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1987</td>
+<td align="right">198000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1988</td>
+<td align="right">204636.4</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1989</td>
+<td align="right">279500.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1990</td>
+<td align="right">220881.7</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1991</td>
+<td align="right">186140.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1992</td>
+<td align="right">218384.6</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1993</td>
+<td align="right">218058.8</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1994</td>
+<td align="right">247900.0</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1995</td>
+<td align="right">262194.4</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1996</td>
+<td align="right">259162.7</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1997</td>
+<td align="right">213637.5</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1998</td>
+<td align="right">235887.5</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">1999</td>
+<td align="right">226544.5</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">2000</td>
+<td align="right">218652.6</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">2001</td>
+<td align="right">243505.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">2002</td>
+<td align="right">226869.6</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">2003</td>
+<td align="right">239469.1</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">2004</td>
+<td align="right">228918.2</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">2005</td>
+<td align="right">241073.6</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">2006</td>
+<td align="right">260361.2</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">2007</td>
+<td align="right">258503.4</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">2008</td>
+<td align="right">360448.9</td>
+</tr>
+<tr class="even">
+<td align="left">RL</td>
+<td align="right">2009</td>
+<td align="right">305086.7</td>
+</tr>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">2010</td>
+<td align="right">394432.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1872</td>
+<td align="right">122000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1880</td>
+<td align="right">200619.8</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1882</td>
+<td align="right">168000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1885</td>
+<td align="right">111250.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1890</td>
+<td align="right">142200.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1892</td>
+<td align="right">291250.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1893</td>
+<td align="right">325000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1898</td>
+<td align="right">106000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1900</td>
+<td align="right">99000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1904</td>
+<td align="right">157500.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1905</td>
+<td align="right">163000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1906</td>
+<td align="right">135000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1910</td>
+<td align="right">107740.4</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1912</td>
+<td align="right">104000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1914</td>
+<td align="right">139333.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1915</td>
+<td align="right">138825.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1916</td>
+<td align="right">121975.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1917</td>
+<td align="right">129500.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1919</td>
+<td align="right">115000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1920</td>
+<td align="right">122653.3</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1921</td>
+<td align="right">114500.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1922</td>
+<td align="right">96125.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1923</td>
+<td align="right">112500.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1924</td>
+<td align="right">104750.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1925</td>
+<td align="right">118055.6</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1926</td>
+<td align="right">120980.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1927</td>
+<td align="right">91750.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1928</td>
+<td align="right">138633.3</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1929</td>
+<td align="right">127333.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1930</td>
+<td align="right">105162.5</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1931</td>
+<td align="right">132975.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1934</td>
+<td align="right">114500.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1935</td>
+<td align="right">108750.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1936</td>
+<td align="right">110200.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1937</td>
+<td align="right">121217.8</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1938</td>
+<td align="right">108400.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1939</td>
+<td align="right">117466.7</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1940</td>
+<td align="right">119750.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1941</td>
+<td align="right">93100.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1945</td>
+<td align="right">95250.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1946</td>
+<td align="right">135000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1947</td>
+<td align="right">116500.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1948</td>
+<td align="right">132500.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1950</td>
+<td align="right">152000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1952</td>
+<td align="right">124500.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1953</td>
+<td align="right">93000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1954</td>
+<td align="right">110800.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1955</td>
+<td align="right">125587.5</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1956</td>
+<td align="right">97000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1957</td>
+<td align="right">131100.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1963</td>
+<td align="right">117500.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1970</td>
+<td align="right">93950.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1971</td>
+<td align="right">98150.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1972</td>
+<td align="right">101083.3</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1973</td>
+<td align="right">103650.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1976</td>
+<td align="right">115975.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1977</td>
+<td align="right">127000.0</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1978</td>
+<td align="right">112000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1980</td>
+<td align="right">138333.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1997</td>
+<td align="right">206300.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">1998</td>
+<td align="right">159833.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">1999</td>
+<td align="right">165000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">2003</td>
+<td align="right">148666.7</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">2004</td>
+<td align="right">159303.1</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">2005</td>
+<td align="right">144333.3</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">2006</td>
+<td align="right">235000.0</td>
+</tr>
+<tr class="even">
+<td align="left">RM</td>
+<td align="right">2008</td>
+<td align="right">392500.0</td>
 </tr>
 </tbody>
 </table>
@@ -538,6 +1553,249 @@ most_remodelated_zone_2007 &lt;- tail(names(sort(table(data_with_remodelation[da
 <div id="cuáles-son-los-materiales-más-utilizados-para-la-fundación-de-las-casas" class="section level3">
 <h3>¿Cuáles son los materiales más utilizados para la fundación de las
 casas?</h3>
+</div>
+<div id="qué-tipos-de-casa-son-más-comunes" class="section level3">
+<h3>¿Qué tipos de casa son más comunes?</h3>
+<pre class="r"><code>grouped_type_data &lt;- data %&gt;% group_by(BldgType)
+type_count &lt;- grouped_type_data %&gt;% summarise(total_count=n(), .groups = &#39;drop&#39;)
+
+grouped_type &lt;- as.data.frame(type_count)
+colnames(grouped_type)[colnames(grouped_type) == &quot;BldgType&quot;] =&quot;Tipo de casa&quot;
+colnames(grouped_type)[colnames(grouped_type) == &quot;total_count&quot;] =&quot;Cantidad&quot;
+grouped_type &lt;- grouped_type[order(grouped_type$`Cantidad`, decreasing = TRUE), ]
+kable(grouped_type[0:5,], caption = &quot;Conteo de tipo de casas&quot;)</code></pre>
+<table>
+<caption>Conteo de tipo de casas</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Tipo de casa</th>
+<th align="right">Cantidad</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">1Fam</td>
+<td align="right">1220</td>
+</tr>
+<tr class="even">
+<td align="left">5</td>
+<td align="left">TwnhsE</td>
+<td align="right">114</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">Duplex</td>
+<td align="right">52</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">Twnhs</td>
+<td align="right">43</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">2fmCon</td>
+<td align="right">31</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="cómo-varia-el-precio-de-las-casas-según-el-vecindario-en-que-se-encuentran" class="section level3">
+<h3>¿Cómo varia el precio de las casas según el vecindario en que se
+encuentran?</h3>
+<pre class="r"><code>grouped_data &lt;- data %&gt;% group_by(Neighborhood)
+agg_tbl &lt;- grouped_data %&gt;% summarise(mean(SalePrice))
+grouped_dataset &lt;- as.data.frame(agg_tbl)
+colnames(grouped_dataset)[colnames(grouped_dataset) == &quot;Neighborhood&quot;] =&quot;Vecindario&quot;
+colnames(grouped_dataset)[colnames(grouped_dataset) == &quot;mean(SalePrice)&quot;] =&quot;Promedio de Precio (USD)&quot;
+grouped_dataset &lt;- grouped_dataset[order(grouped_dataset$Vecindario, decreasing = FALSE), ]
+kable(grouped_dataset, caption = &quot;Promedio de ventas por cada vecindario&quot;)</code></pre>
+<table>
+<caption>Promedio de ventas por cada vecindario</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Vecindario</th>
+<th align="right">Promedio de Precio (USD)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">Blmngtn</td>
+<td align="right">194870.88</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">Blueste</td>
+<td align="right">137500.00</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">BrDale</td>
+<td align="right">104493.75</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">BrkSide</td>
+<td align="right">124834.05</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">ClearCr</td>
+<td align="right">212565.43</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">CollgCr</td>
+<td align="right">197965.77</td>
+</tr>
+<tr class="odd">
+<td align="left">7</td>
+<td align="left">Crawfor</td>
+<td align="right">210624.73</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">Edwards</td>
+<td align="right">128219.70</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="left">Gilbert</td>
+<td align="right">192854.51</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">IDOTRR</td>
+<td align="right">100123.78</td>
+</tr>
+<tr class="odd">
+<td align="left">11</td>
+<td align="left">MeadowV</td>
+<td align="right">98576.47</td>
+</tr>
+<tr class="even">
+<td align="left">12</td>
+<td align="left">Mitchel</td>
+<td align="right">156270.12</td>
+</tr>
+<tr class="odd">
+<td align="left">13</td>
+<td align="left">NAmes</td>
+<td align="right">145847.08</td>
+</tr>
+<tr class="even">
+<td align="left">16</td>
+<td align="left">NoRidge</td>
+<td align="right">335295.32</td>
+</tr>
+<tr class="odd">
+<td align="left">14</td>
+<td align="left">NPkVill</td>
+<td align="right">142694.44</td>
+</tr>
+<tr class="even">
+<td align="left">17</td>
+<td align="left">NridgHt</td>
+<td align="right">316270.62</td>
+</tr>
+<tr class="odd">
+<td align="left">15</td>
+<td align="left">NWAmes</td>
+<td align="right">189050.07</td>
+</tr>
+<tr class="even">
+<td align="left">18</td>
+<td align="left">OldTown</td>
+<td align="right">128225.30</td>
+</tr>
+<tr class="odd">
+<td align="left">20</td>
+<td align="left">Sawyer</td>
+<td align="right">136793.14</td>
+</tr>
+<tr class="even">
+<td align="left">21</td>
+<td align="left">SawyerW</td>
+<td align="right">186555.80</td>
+</tr>
+<tr class="odd">
+<td align="left">22</td>
+<td align="left">Somerst</td>
+<td align="right">225379.84</td>
+</tr>
+<tr class="even">
+<td align="left">23</td>
+<td align="left">StoneBr</td>
+<td align="right">310499.00</td>
+</tr>
+<tr class="odd">
+<td align="left">19</td>
+<td align="left">SWISU</td>
+<td align="right">142591.36</td>
+</tr>
+<tr class="even">
+<td align="left">24</td>
+<td align="left">Timber</td>
+<td align="right">242247.45</td>
+</tr>
+<tr class="odd">
+<td align="left">25</td>
+<td align="left">Veenker</td>
+<td align="right">238772.73</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>ggplot(data, aes(x = SalePrice)) + geom_histogram(binwidth = 25000, color = &quot;green&quot;) +
+ggtitle(&quot;Distribución del precio de venta&quot;) + xlab(&quot;Precio de venta (USD)&quot;) + ylab(&quot;Conteo&quot;)</code></pre>
+<p><img src="data:image/png;base64,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" width="672" /></p>
+</div>
+<div id="que-proporción-de-casas-se-encuentra-en-cada-zona" class="section level3">
+<h3>¿Que proporción de casas se encuentra en cada zona?</h3>
+<pre class="r"><code>zone_counts &lt;- data %&gt;% count(MSZoning) %&gt;% mutate(Proporcion = prop.table(n) * 100) %&gt;% 
+rename(Zona = MSZoning, Cantidad = n) %&gt;% mutate(Proporcion = paste0(round(Proporcion, 2), &quot;%&quot;)) %&gt;%
+arrange(desc(Proporcion))
+kable(zone_counts, caption = &quot;Proporción de casas por zona&quot;)</code></pre>
+<table>
+<caption>Proporción de casas por zona</caption>
+<thead>
+<tr class="header">
+<th align="left">Zona</th>
+<th align="right">Cantidad</th>
+<th align="left">Proporcion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">RL</td>
+<td align="right">1151</td>
+<td align="left">78.84%</td>
+</tr>
+<tr class="even">
+<td align="left">FV</td>
+<td align="right">65</td>
+<td align="left">4.45%</td>
+</tr>
+<tr class="odd">
+<td align="left">RM</td>
+<td align="right">218</td>
+<td align="left">14.93%</td>
+</tr>
+<tr class="even">
+<td align="left">RH</td>
+<td align="right">16</td>
+<td align="left">1.1%</td>
+</tr>
+<tr class="odd">
+<td align="left">C (all)</td>
+<td align="right">10</td>
+<td align="left">0.68%</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>

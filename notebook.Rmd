@@ -133,3 +133,18 @@ grouped_dataset <- grouped_dataset[order(grouped_dataset$Vecindario, decreasing 
 kable(grouped_dataset, caption = "Promedio de ventas por cada vecindario")
 ```
 
+```{r}
+ggplot(data, aes(x = SalePrice)) + geom_histogram(binwidth = 25000, color = "green") +
+ggtitle("Distribución del precio de venta") + xlab("Precio de venta (USD)") + ylab("Conteo")
+
+```
+
+
+### ¿Que proporción de casas se encuentra en cada zona?
+```{r}
+zone_counts <- data %>% count(MSZoning) %>% mutate(Proporcion = prop.table(n) * 100) %>% 
+rename(Zona = MSZoning, Cantidad = n) %>% mutate(Proporcion = paste0(round(Proporcion, 2), "%")) %>%
+arrange(desc(Proporcion))
+kable(zone_counts, caption = "Proporción de casas por zona")
+```
+
