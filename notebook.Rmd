@@ -13,6 +13,10 @@ library(knitr)
 library(ggplot2)
 ```
 
+```{r confi dplyr}
+options(dplyr.summarise.inform = FALSE)
+```
+
 
 ```{r train data}
 data <- read.csv("train.csv")
@@ -34,6 +38,21 @@ colnames(grouped_dataset)[colnames(grouped_dataset) == "mean(SalePrice)"] ="Prom
 grouped_dataset <- grouped_dataset[order(grouped_dataset$`Promedio de Precio (USD)`, decreasing = FALSE), ]
 kable(grouped_dataset, caption = "Promedio de ventas por cada zona")
 ```
+
+### Propuesta 2
+```{r}
+grouped_data <- data %>% group_by(MSZoning, YearBuilt)
+agg_tbl <- grouped_data %>% summarise(mean(SalePrice))
+grouped_dataset <- as.data.frame(agg_tbl)
+colnames(grouped_dataset)[colnames(grouped_dataset) == "MSZoning"] = "Zona"
+colnames(grouped_dataset)[colnames(grouped_dataset) == "YearBuilt"] = "Año de Construcción"
+colnames(grouped_dataset)[colnames(grouped_dataset) == "mean(SalePrice)"] = "Promedio de Precio (USD)"
+grouped_dataset <- grouped_dataset[order(grouped_dataset$`Zona`, grouped_dataset$`Año de Construcción`, decreasing = FALSE), ]
+kable(grouped_dataset, caption = "Promedio de ventas por cada zona y año de construcción")
+```
+
+
+
 
 ### ¿En qué vecindario se ubican las casas con mayor área en su terreno?
 ``` {r area_per_neighborhood}
@@ -90,7 +109,6 @@ La mayoría de las remodelaciones pertenecen a la zona `RL - Residencial de baja
 
 
 ### ¿Qué tipos de casa son más comunes?
-
 ```{r}
 grouped_type_data <- data %>% group_by(BldgType)
 type_count <- grouped_type_data %>% summarise(total_count=n(), .groups = 'drop')
