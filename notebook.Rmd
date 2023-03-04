@@ -27,31 +27,19 @@ data <- read.csv("train.csv")
 
 
 
-### ¿Cómo cambia el promedio de venta de una propiedad en la misma zona a través de los años?
+### ¿Cuál es la Zona más cara?
 
 ``` {r average_price_per_zone}
 grouped_data <- data %>% group_by(MSZoning)
-agg_tbl <- grouped_data %>% summarise(mean(SalePrice))
+agg_tbl <- grouped_data %>% summarise(median(SalePrice))
 grouped_dataset <- as.data.frame(agg_tbl)
 colnames(grouped_dataset)[colnames(grouped_dataset) == "MSZoning"] ="Zona"
-colnames(grouped_dataset)[colnames(grouped_dataset) == "mean(SalePrice)"] ="Promedio de Precio (USD)"
-grouped_dataset <- grouped_dataset[order(grouped_dataset$`Promedio de Precio (USD)`, decreasing = FALSE), ]
+colnames(grouped_dataset)[colnames(grouped_dataset) == "median(SalePrice)"] ="Promedio de Precio (USD)"
+grouped_dataset <- grouped_dataset[order(grouped_dataset$`Promedio de Precio (USD)`, decreasing = TRUE), ]
 kable(grouped_dataset, caption = "Promedio de ventas por cada zona")
 ```
 
-### Propuesta 2
-```{r}
-grouped_data <- data %>% group_by(MSZoning, YearBuilt)
-agg_tbl <- grouped_data %>% summarise(mean(SalePrice))
-grouped_dataset <- as.data.frame(agg_tbl)
-colnames(grouped_dataset)[colnames(grouped_dataset) == "MSZoning"] = "Zona"
-colnames(grouped_dataset)[colnames(grouped_dataset) == "YearBuilt"] = "Año de Construcción"
-colnames(grouped_dataset)[colnames(grouped_dataset) == "mean(SalePrice)"] = "Promedio de Precio (USD)"
-grouped_dataset <- grouped_dataset[order(grouped_dataset$`Zona`, grouped_dataset$`Año de Construcción`, decreasing = FALSE), ]
-kable(grouped_dataset, caption = "Promedio de ventas por cada zona y año de construcción")
-```
-
-
+Un 50% de las casas en la zona `Floating Village Residential` se venden por arriba de los 205940.00 USD. Posteriormente sigue `Residential Low Density`.
 
 
 ### ¿En qué vecindario se ubican las casas con mayor área en su terreno?
@@ -77,7 +65,7 @@ La información nos demuestra que Clear Creek es el vecindario que tiene los ter
 ```{r remodelation_by_year}
 data_with_remodelation <- data[data$YearBuilt != data$YearRemodAdd,]
 ```
-En el dataset hay `r nrow(data_with_remodelation)` registros de casas que fueron remodeladas. A continuación agrupamos por año
+En el dataset hay `r nrow(data_with_remodelation)` registros de casas que fueron remodeladas. A continuación agrupamos por año la cantidad de remodelaciones.
 
 ```{r group_remodelation_by_year}
 grouped_remodelation_data <- data_with_remodelation %>% group_by(YearRemodAdd)
@@ -107,6 +95,19 @@ La mayoría de las remodelaciones pertenecen a la zona `RL - Residencial de baja
 
 ### ¿Cuáles son los materiales más utilizados para la fundación de las casas?
 
+```{r most_used_foundation}
+grouped_foundation_data <- data %>% group_by(Foundation)
+foundation_with_count <- grouped_foundation_data %>% summarise(total_count=n(),
+            .groups = 'drop')
+
+grouped_foundation <- as.data.frame(foundation_with_count)
+colnames(grouped_foundation)[colnames(grouped_foundation) == "Foundation"] ="Material para la base"
+colnames(grouped_foundation)[colnames(grouped_foundation) == "total_count"] ="Cantidad de casas"
+grouped_foundation <- grouped_foundation[order(grouped_foundation$`Cantidad de casas`, decreasing = TRUE), ]
+kable(grouped_foundation[0:5,], caption = "Numero de casas por cada material de base")
+
+```
+La mayoría de casas están hechas de concreto. Puede ser que un tipo menos común, pero más caro, como el ladrillo signifique un precio más alto.
 
 ### ¿Qué tipos de casa son más comunes?
 ```{r}
