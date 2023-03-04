@@ -14,7 +14,7 @@ library(ggplot2)
 ```
 
 
-```{r cars}
+```{r train data}
 data <- read.csv("train.csv")
 ```
 
@@ -87,3 +87,19 @@ most_remodelated_zone_2007 <- tail(names(sort(table(data_with_remodelation[data_
 La mayoría de las remodelaciones pertenecen a la zona `RL - Residencial de baja densidad`. 
 
 ### ¿Cuáles son los materiales más utilizados para la fundación de las casas?
+
+
+### ¿Qué tipos de casa son más comunes?
+
+```{r}
+grouped_type_data <- data %>% group_by(BldgType)
+type_count <- grouped_type_data %>% summarise(total_count=n(), .groups = 'drop')
+
+grouped_type <- as.data.frame(type_count)
+colnames(grouped_type)[colnames(grouped_type) == "BldgType"] ="Tipo de casa"
+colnames(grouped_type)[colnames(grouped_type) == "total_count"] ="Cantidad"
+grouped_type <- grouped_type[order(grouped_type$`Cantidad`, decreasing = TRUE), ]
+kable(grouped_type[0:5,], caption = "Conteo de tipo de casas")
+
+```
+
