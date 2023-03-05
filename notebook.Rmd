@@ -184,9 +184,11 @@ Como se puede ver si influyen la relación con el precio, las psicinas suelen el
 
 neighborhoodNames <- c("NoRidge", "NridgHt", "StoneBr", "Timber", "Veenker", "Somerst", "ClearCr", "Crawfor", "CollgCr", "Blmngtn", "Gilbert", "NWAmes", "SawyerW", "Mitchel", "NAmes", "NPkVill", "SWISU", "Blueste", "Sawyer", "OldTown", "Edwards", "BrkSide", "BrDale", "IDOTRR", "MeadowV")
 
-data$neighborhood_id[is.na(data$neighborhood_id)] <- 100
-
-data$neighborhood_id <- match(data$neighborhood, neighborhoodNames)
+for(n in 1:length(neighborhoodNames)) {
+  # Variable minuscula para nuestro uso.
+  data$neighborhood[data$Neighborhood == neighborhoodNames[n]] <- n
+}
+data$Neighborhood <- NULL
 
 ```
 
