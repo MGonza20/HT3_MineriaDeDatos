@@ -161,6 +161,22 @@ Las características más comunes son las siguientes:
 3) Estilo de la casa: 1Story (Un nivel)
 4) Tipo de Garaje: Attchd (Adjuntada a la casa)
 
+### ¿Cuántas casas tienen piscina o garaje? ¿Como se relacionan estas características con el precio de venta?
+``` {r}
+print("Counting Pools And Garages")
+nrow(data) - table(data$PoolArea > 0)
+nrow(data) - nrow(data[data$GarageType=="NA",])
+print("")
+print("Relation with the seal price")
+tapply(data$SalePrice, data$PoolQC > 0, mean)
+tapply(data$SalePrice, data$GarageType=="NA", mean)
+
+```
+
+1453 casas tienen psicina
+1379 casas cuentan con garaje
+
+Como se puede ver si influyen la relación con el precio, las psicinas suelen elevar el precio de las casas
 
 ### Preprocesamiento de datos
 
