@@ -197,8 +197,10 @@ ggplot(data = data, aes(x = YrSold, y = SalePrice)) +
 Como se puede ver en las dos gráficas presentadas desde el año 2006 al 2009 existio una tendencia donde
 subía y bajan las ventas de las casas. Pero desde 2010 este fue en bajando.
 
+
 ### Preprocesamiento de datos
 
+#### Asignacion de valores para vecindarios
 ```{r neihborhood values}
 
 neighborhoodNames <- c("NoRidge", "NridgHt", "StoneBr", "Timber", "Veenker", "Somerst", "ClearCr", "Crawfor", "CollgCr", "Blmngtn", "Gilbert", "NWAmes", "SawyerW", "Mitchel", "NAmes", "NPkVill", "SWISU", "Blueste", "Sawyer", "OldTown", "Edwards", "BrkSide", "BrDale", "IDOTRR", "MeadowV")
@@ -210,4 +212,23 @@ for(n in 1:length(neighborhoodNames)) {
 data$Neighborhood <- NULL
 
 ```
+
+#### Asignación de valores para estilo de casa
+```{r}
+hs <- c("1Story", "2Story",	"1.5Fin",	"SLvl", "SFoyer")
+
+for(n in 1:length(hs)) {
+  # Variable minuscula para nuestro uso.
+  data$houseStyle[data$HouseStyle == hs[n]] <- n
+}
+data$HouseStyle <- NULL
+
+```
+
+### Borrando valores inneceesarios
+```{r}
+dataH <- subset(data, select = -c(Alley, LotShape, LotConfig, LandSlope, Fence, MiscFeature, MiscVal, ScreenPorch, EnclosedPorch, Functional, BldgType))
+```
+
+
 
