@@ -145,6 +145,23 @@ kable(zone_counts, caption = "Proporción de casas por zona")
 ```
 
 
+### ¿Cuáles son las características más comunes de las casas que se venden por encima del precio medio?
+``` {r}
+price_mean_up <- mean(data$SalePrice)
+houses_mean_above <- subset(data, SalePrice > price_mean_up)
+ggplot(data = houses_mean_above, aes(x = MSZoning)) +geom_bar()
+ggplot(data = houses_mean_above, aes(x = BldgType)) +geom_bar()
+ggplot(data = houses_mean_above, aes(x = HouseStyle)) +geom_bar()
+ggplot(data = houses_mean_above, aes(x = GarageType)) +geom_bar()
+```
+
+Las características más comunes son las siguientes:
+1) Zona donda se ubica las casas: RL (Casa residencial de baja densidad)
+2) Tipo de vivienda: 1Fam (Unifamiliar)
+3) Estilo de la casa: 1Story (Un nivel)
+4) Tipo de Garaje: Attchd (Adjuntada a la casa)
+
+
 ### Preprocesamiento de datos
 
 ```{r neihborhood values}
