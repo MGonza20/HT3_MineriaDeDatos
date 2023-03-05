@@ -178,6 +178,25 @@ tapply(data$SalePrice, data$GarageType=="NA", mean)
 
 Como se puede ver si influyen la relación con el precio, las psicinas suelen elevar el precio de las casas
 
+
+### ¿Cómo se distribuyen las ventas de casas a lo largo del tiempo entre los diferentes periodos?
+
+``` {r}
+ggplot(data = data, aes(x = factor(YrSold))) +
+  geom_bar(fill = "green") +
+  ggtitle("Ventas de casas por año") +
+  xlab("Año") +
+  ylab("Cantidad de ventas")
+
+ggplot(data = data, aes(x = YrSold, y = SalePrice)) +
+  geom_line(color = "green") +
+  ggtitle("Tendencia del precio de venta") +
+  xlab("Año") +
+  ylab("Precio de venta promedio")
+```
+Como se puede ver en las dos gráficas presentadas desde el año 2006 al 2009 existio una tendencia donde
+subía y bajan las ventas de las casas. Pero desde 2010 este fue en bajando.
+
 ### Preprocesamiento de datos
 
 ```{r neihborhood values}
