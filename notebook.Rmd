@@ -15,6 +15,7 @@ library(knitr)
 library(ggplot2)
 library(cluster)
 library(factoextra)
+require(caret)
 ```
 
 ```{r confi dplyr}
@@ -355,6 +356,18 @@ cleanData <- subset(data, select = columns_used)
 ```
 
 
+### Dividiendo los datos en entrenamiento y prueba
+Dividimos el test de datos en un 75% para entrenamiento y un 25% para pruebas. Utilizamos el metodo de bootstraping porque nos asegura que la distribución de la data toma en cuenta la población total. Es decir, no tendremos un sesgo genrado por cómo la información está organizada.
+``` {r}
+expectedResult <- cleanData$salePrice
+partition <- createDataPartition(y=expectedResult,
+                                 p=.75,
+                                 list=F)
+
+trainingSet <- cleanData[partition,]
+testingSet <- cleanData[-partition,]
+```
+
 ### Clustering
 
 Agrupamiento de las columnas más importantes
@@ -377,8 +390,4 @@ fviz_dist(data_dist, show_labels=F)
 ```
 
 
-### Dividiendo los datos en entrenamiento y prueba
 
-``` {r}
-
-```
