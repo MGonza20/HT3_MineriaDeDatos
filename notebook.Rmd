@@ -16,6 +16,8 @@ library(ggplot2)
 library(cluster)
 library(factoextra)
 require(caret)
+library(corrplot)
+
 ```
 
 ```{r confi dplyr}
@@ -283,6 +285,13 @@ data$roofMaterial[data$RoofMatl == "WdShake"] <- 7
 data$roofMaterial[data$RoofMatl == "WdShngl"] <- 8
 columns_used <- append(columns_used, "roofMaterial")
 
+data$overallQuality <- data$OverallQual
+columns_used <- append(columns_used, "overallQuality")
+
+data$overallCondition <- data$OverallCond
+columns_used <- append(columns_used, "overallCondition")
+
+
 data$exteriorCondition[data$ExterCond == "Po"] <- 1
 data$exteriorCondition[data$ExterCond == "Fa"] <- 2
 data$exteriorCondition[data$ExterCond == "TA"] <- 3
@@ -324,6 +333,9 @@ data$additionalFeature[is.na(data$MiscFeature)] <- 0
 data$additionalFeature[!is.na(data$MiscFeature)] <- 1
 columns_used <- append(columns_used, "additionalFeature")
 
+data$livingArea <- data$GrLivArea
+columns_used <- append(columns_used, "livingArea")
+
 data$yearBuilt <- data$YearBuilt
 columns_used <- append(columns_used, "yearBuilt")
 
@@ -359,6 +371,7 @@ cleanData <- subset(data, select = columns_used)
 ### Dividiendo los datos en entrenamiento y prueba
 Dividimos el test de datos en un 75% para entrenamiento y un 25% para pruebas. Utilizamos el metodo de bootstraping porque nos asegura que la distribución de la data toma en cuenta la población total. Es decir, no tendremos un sesgo genrado por cómo la información está organizada.
 ``` {r}
+set.seed(5)
 expectedResult <- cleanData$salePrice
 partition <- createDataPartition(y=expectedResult,
                                  p=.75,
@@ -367,6 +380,59 @@ partition <- createDataPartition(y=expectedResult,
 trainingSet <- cleanData[partition,]
 testingSet <- cleanData[-partition,]
 ```
+
+### Ingeniería de los Datos
+
+Visualizamos la matriz de correlación para ver tendencias en la data.
+```{r}
+correlations <- cor(cleanData[,c("neighborhood", "yearBuilt", "overallCondition", "overallQuality", "houseZone", "houseUtilities")], use="pairwise.complete.obs")
+corrplot(correlations, method="circle", type="lower",  sig.level = 0.01, insig = "blank")
+```
+De esta figura obtenemos las siguientes conclusiones:
+- El año en el que se hizo la casa está correlacionado con el vecindario en el que se encuentra.
+- La condición de la casa tienen una correlación ligeramente negativa. Puede ser que mientras el año es menor, la condición actual reduce.
+- La zona donde se encuentra la casa también está ligeramente relacionada a la calidad de los materiales.
+
+Continuamos con un segundo diagrama
+```{r}
+correlations <- cor(cleanData[,c("neighborhood", "yearBuilt", "overallCondition", "overallQuality", "pool", "fireplace", "foundationMaterial", "exteriorCondition", "additionalFeature", "livingArea" )], use="pairwise.complete.obs")
+corrplot(correlations, method="circle", type="lower",  sig.level = 0.01, insig = "blank")
+```
+Este diagrama nos da otra información de las variables:
+- Mientras mejor sea la condición del exterior, mejor es la condición en general de la casa.
+- la pisicna está ligeramente correlacionada con tener una fogata y con la condición del exterior de la casa.
+- El material usado para la base de la casa está relacionado con el año de construcción de esta.
+- El area de vivienda de la casa incrementa conforme la calidad de la construcción lo hace.
+- Una área de vivienda mayor permite tener más comodidades, como fogata o una piscina.
+
+Si hacemos una gráfica de puntos tomando en cuenta algunas variables importantes podemos obtener más información:
+```{r}
+pairs(~yearBuilt+overallQuality+overallCondition+livingArea,data=cleanData,
+   main="Matriz de correlación")
+
+```
+- la calidad de las casas ha mejorado con el paso de los años.
+- El área de vivienda aumenta ligeramente con el paso del tiempo.
+
+Tomando este análisis en cuenta, se utilizarán las siguientes variables como candidatas a mejores predicciones:
+- yearBuilt - el año de construcción tiene una alta influencia en la calidad de la casa, vecindario donde se encuentra, condición actual y área de vivienda.
+- livingArea - el area de vivienda es un factor imporante porque indica cuánto espacio puede ser aprovechado en la casa. No es la misma área que necesita una familia de 2 personas a una de 5. Además, un área mayor permite tener comodidades como piscina o fogata.
+- overallQuality - La calidad de la casa también es importante para el precio. Esto nos indica que el material usado es resistente.
+- overallCondition - La condición actual de la casa da una mejor impresión al mostrarla a posibles clientes.
+- pool - Una piscina aumenta el precio dado que el cliente debe tener presupuesto para mantenerla.
+- fireplace - en Iowa (lugar del dataset) hay inviernos con nieve, los clientes agradecerán esta comodidad
+
+### Asegurando resultados consistentes
+```{r}
+set.seed(5)
+```
+
+
+### Modelo univariable
+
+### Modelo multivariable
+
+
 
 ### Clustering
 
