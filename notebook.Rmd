@@ -213,14 +213,10 @@ Pero desde 2010 este fue en bajando.
 
 ### Preprocesamiento de datos
 
-```{r}
-columns_used <- c()
-```
 
-#### Asignacion de valores para vecindarios
 
 ```{r neihborhood values}
-
+columns_used <- c()
 neighborhoodNames <- c("NoRidge", "NridgHt", "StoneBr", "Timber", "Veenker", "Somerst", "ClearCr", "Crawfor", "CollgCr", "Blmngtn", "Gilbert", "NWAmes", "SawyerW", "Mitchel", "NAmes", "NPkVill", "SWISU", "Blueste", "Sawyer", "OldTown", "Edwards", "BrkSide", "BrDale", "IDOTRR", "MeadowV")
 
 for(n in 1:length(neighborhoodNames)) {
@@ -348,7 +344,7 @@ for(n in 1:length(msz)) {
   # Variable minuscula para nuestro uso.
   data$mSZoning[data$MSZoning == msz[n]] <- n
 }
-columns_used <- append(mSZoning, "saleType")
+columns_used <- append(columns_used, "mSZoning")
 
 ```
 
