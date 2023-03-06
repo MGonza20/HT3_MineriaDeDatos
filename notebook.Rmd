@@ -2,8 +2,10 @@
 title: "notebook"
 output: html_document
 date: "2023-03-02"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
-
 
 # Hoja de trabajo 03 - Regresión Lineal
 
@@ -11,25 +13,23 @@ date: "2023-03-02"
 library(dplyr)
 library(knitr)
 library(ggplot2)
+library(cluster)
+library(factoextra)
 ```
 
 ```{r confi dplyr}
 options(dplyr.summarise.inform = FALSE)
 ```
 
-
 ```{r train data}
 data <- read.csv("train.csv")
 ```
 
-
 ## Análisis Exploratorio
-
-
 
 ### ¿Cuál es la Zona más cara?
 
-``` {r average_price_per_zone}
+```{r average_price_per_zone}
 grouped_data <- data %>% group_by(MSZoning)
 agg_tbl <- grouped_data %>% summarise(median(SalePrice))
 grouped_dataset <- as.data.frame(agg_tbl)
@@ -39,11 +39,13 @@ grouped_dataset <- grouped_dataset[order(grouped_dataset$`Promedio de Precio (US
 kable(grouped_dataset, caption = "Promedio de ventas por cada zona")
 ```
 
-Un 50% de las casas en la zona `Floating Village Residential` se venden por arriba de los 205940.00 USD. Posteriormente sigue `Residential Low Density`.
-
+Un 50% de las casas en la zona `Floating Village Residential` se venden
+por arriba de los 205940.00 USD. Posteriormente sigue
+`Residential Low Density`.
 
 ### ¿En qué vecindario se ubican las casas con mayor área en su terreno?
-``` {r area_per_neighborhood}
+
+```{r area_per_neighborhood}
 grouped_area_data <- data %>% group_by(Neighborhood)
 area_with_median <- grouped_area_data %>% summarise(median(LotArea))
 grouped_dataset_lot <- as.data.frame(area_with_median)
@@ -53,19 +55,24 @@ grouped_dataset_lot <- grouped_dataset_lot[order(grouped_dataset_lot$`Area del t
 kable(grouped_dataset_lot[0:5,], caption = "Mediana de area por cada vecindario")
 ```
 
-``` {r plot_area_per_neighborhood}
+```{r plot_area_per_neighborhood}
 ggplot(grouped_dataset_lot[0:5,], aes(x=Vecindario, y=`Area del terreno ft^2`)) +
 geom_bar(stat="identity", fill="steelblue") 
 ```
 
-La información nos demuestra que Clear Creek es el vecindario que tiene los terrenos con mayor área. Un 50% de los terrenos tiene un área mayor a 17575.0 pies cuadrados.
+La información nos demuestra que Clear Creek es el vecindario que tiene
+los terrenos con mayor área. Un 50% de los terrenos tiene un área mayor
+a 17575.0 pies cuadrados.
 
 ### ¿En qué año hubo más remodelaciones?
 
 ```{r remodelation_by_year}
 data_with_remodelation <- data[data$YearBuilt != data$YearRemodAdd,]
 ```
-En el dataset hay `r nrow(data_with_remodelation)` registros de casas que fueron remodeladas. A continuación agrupamos por año la cantidad de remodelaciones.
+
+En el dataset hay `r nrow(data_with_remodelation)` registros de casas
+que fueron remodeladas. A continuación agrupamos por año la cantidad de
+remodelaciones.
 
 ```{r group_remodelation_by_year}
 grouped_remodelation_data <- data_with_remodelation %>% group_by(YearRemodAdd)
@@ -80,9 +87,11 @@ kable(grouped_remodelation[0:5,], caption = "Numero de casas Remodeladas por añ
 
 ```
 
-Los 5 años con más casas remodeladas son 1950, 2006, 2007, 2005 y 2000 respectivamente. Es importante notar que en 1950 hay mucha más diferencia que con los demás años.
+Los 5 años con más casas remodeladas son 1950, 2006, 2007, 2005 y 2000
+respectivamente. Es importante notar que en 1950 hay mucha más
+diferencia que con los demás años.
 
-``` {r}
+```{r}
 most_remodelated_zone_1950 <- tail(names(sort(table(data_with_remodelation[data_with_remodelation$YearRemodAdd == "1950",]$MSZoning))), 1)
 
 most_remodelated_zone_2006 <- tail(names(sort(table(data_with_remodelation[data_with_remodelation$YearRemodAdd == "2006",]$MSZoning))), 1)
@@ -91,7 +100,8 @@ most_remodelated_zone_2007 <- tail(names(sort(table(data_with_remodelation[data_
 
 ```
 
-La mayoría de las remodelaciones pertenecen a la zona `RL - Residencial de baja densidad`. 
+La mayoría de las remodelaciones pertenecen a la zona
+`RL - Residencial de baja densidad`.
 
 ### ¿Cuáles son los materiales más utilizados para la fundación de las casas?
 
@@ -107,9 +117,13 @@ grouped_foundation <- grouped_foundation[order(grouped_foundation$`Cantidad de c
 kable(grouped_foundation[0:5,], caption = "Numero de casas por cada material de base")
 
 ```
-La mayoría de casas están hechas de concreto. Puede ser que un tipo menos común, pero más caro, como el ladrillo signifique un precio más alto.
+
+La mayoría de casas están hechas de concreto. Puede ser que un tipo
+menos común, pero más caro, como el ladrillo signifique un precio más
+alto.
 
 ### ¿Qué tipos de casa son más comunes?
+
 ```{r}
 grouped_type_data <- data %>% group_by(BldgType)
 type_count <- grouped_type_data %>% summarise(total_count=n(), .groups = 'drop')
@@ -122,8 +136,8 @@ kable(grouped_type[0:5,], caption = "Conteo de tipo de casas")
 
 ```
 
-
 ### ¿Cómo varia el precio de las casas según el vecindario en que se encuentran?
+
 ```{r}
 grouped_data <- data %>% group_by(Neighborhood)
 agg_tbl <- grouped_data %>% summarise(mean(SalePrice))
@@ -134,9 +148,8 @@ grouped_dataset <- grouped_dataset[order(grouped_dataset$`Promedio de Precio (US
 kable(grouped_dataset, caption = "Promedio de ventas por cada vecindario")
 ```
 
-
-
 ### ¿Que proporción de casas se encuentra en cada zona?
+
 ```{r}
 zone_counts <- data %>% count(MSZoning) %>% mutate(Proporcion = prop.table(n) * 100) %>% 
 rename(Zona = MSZoning, Cantidad = n) %>% mutate(Proporcion = paste0(round(Proporcion, 2), "%")) %>%
@@ -144,9 +157,9 @@ arrange(desc(Proporcion))
 kable(zone_counts, caption = "Proporción de casas por zona")
 ```
 
-
 ### ¿Cuáles son las características más comunes de las casas que se venden por encima del precio medio?
-``` {r}
+
+```{r}
 price_mean_up <- mean(data$SalePrice)
 houses_mean_above <- subset(data, SalePrice > price_mean_up)
 ggplot(data = houses_mean_above, aes(x = MSZoning)) +geom_bar()
@@ -155,14 +168,14 @@ ggplot(data = houses_mean_above, aes(x = HouseStyle)) +geom_bar()
 ggplot(data = houses_mean_above, aes(x = GarageType)) +geom_bar()
 ```
 
-Las características más comunes son las siguientes:
-1) Zona donda se ubica las casas: RL (Casa residencial de baja densidad)
-2) Tipo de vivienda: 1Fam (Unifamiliar)
-3) Estilo de la casa: 1Story (Un nivel)
-4) Tipo de Garaje: Attchd (Adjuntada a la casa)
+Las características más comunes son las siguientes: 1) Zona donda se
+ubica las casas: RL (Casa residencial de baja densidad) 2) Tipo de
+vivienda: 1Fam (Unifamiliar) 3) Estilo de la casa: 1Story (Un nivel) 4)
+Tipo de Garaje: Attchd (Adjuntada a la casa)
 
 ### ¿Cuántas casas tienen piscina o garaje? ¿Como se relacionan estas características con el precio de venta?
-``` {r}
+
+```{r}
 print("Counting Pools And Garages")
 nrow(data) - table(data$PoolArea > 0)
 nrow(data) - nrow(data[data$GarageType=="NA",])
@@ -173,15 +186,14 @@ tapply(data$SalePrice, data$GarageType=="NA", mean)
 
 ```
 
-1453 casas tienen psicina
-1379 casas cuentan con garaje
+1453 casas tienen psicina 1379 casas cuentan con garaje
 
-Como se puede ver si influyen la relación con el precio, las psicinas suelen elevar el precio de las casas
-
+Como se puede ver si influyen la relación con el precio, las psicinas
+suelen elevar el precio de las casas
 
 ### ¿Cómo se distribuyen las ventas de casas a lo largo del tiempo entre los diferentes periodos?
 
-``` {r}
+```{r}
 ggplot(data = data, aes(x = factor(YrSold))) +
   geom_bar(fill = "green") +
   ggtitle("Ventas de casas por año") +
@@ -194,13 +206,15 @@ ggplot(data = data, aes(x = YrSold, y = SalePrice)) +
   xlab("Año") +
   ylab("Precio de venta promedio")
 ```
-Como se puede ver en las dos gráficas presentadas desde el año 2006 al 2009 existio una tendencia donde
-subía y bajan las ventas de las casas. Pero desde 2010 este fue en bajando.
 
+Como se puede ver en las dos gráficas presentadas desde el año 2006 al
+2009 existio una tendencia donde subía y bajan las ventas de las casas.
+Pero desde 2010 este fue en bajando.
 
 ### Preprocesamiento de datos
 
 #### Asignacion de valores para vecindarios
+
 ```{r neihborhood values}
 
 neighborhoodNames <- c("NoRidge", "NridgHt", "StoneBr", "Timber", "Veenker", "Somerst", "ClearCr", "Crawfor", "CollgCr", "Blmngtn", "Gilbert", "NWAmes", "SawyerW", "Mitchel", "NAmes", "NPkVill", "SWISU", "Blueste", "Sawyer", "OldTown", "Edwards", "BrkSide", "BrDale", "IDOTRR", "MeadowV")
@@ -214,6 +228,7 @@ data$Neighborhood <- NULL
 ```
 
 #### Asignación de valores para estilo de casa
+
 ```{r}
 hs <- c("1Story", "2Story",	"1.5Fin",	"SLvl", "SFoyer")
 
@@ -226,9 +241,29 @@ data$HouseStyle <- NULL
 ```
 
 ### Borrando valores inneceesarios
+
 ```{r}
 dataH <- subset(data, select = -c(Alley, LotShape, LotConfig, LandSlope, Fence, MiscFeature, MiscVal, ScreenPorch, EnclosedPorch, Functional, BldgType))
 ```
 
+### Clustering
 
+Agrupamiento de las columnas más importantes
+``` {r}
+# Definir las columnas más importantes
+important_cols <- c("YrSold", "SalePrice", "YearBuilt", "YearRemodAdd", "PoolArea", "GarageArea", "OverallQual", "OverallCond", "LotFrontage", "LotArea", "GarageCars")
+# Normalizar variables numericas
+cols_num_norm <- data[,important_cols] <- mutate_if(data[,important_cols], is.numeric, scale)
+```
+
+Resumen de las columnas a utilizar para llevar a cabo el clustering
+```{r}
+print(summary(data[,important_cols]))
+```
+
+Evaluación Visual de Tendencia de la data
+``` {r}
+data_dist <- dist(data[,1:4])
+fviz_dist(data_dist, show_labels=F)
+```
 
