@@ -333,52 +333,24 @@ columns_used <- append(columns_used, "yearBuilt")
 
 data$salePrice <- data$SalePrice
 columns_used <- append(columns_used, "salePrice")
-```
 
-```{r}
-msz <- c("FV", "RL", "RH", "RM" , "C (all)")
-
-for(n in 1:length(msz)) {
-  # Variable minuscula para nuestro uso.
-  data$mSZoning[data$MSZoning == msz[n]] <- n
-}
-data$MSZoning <- NULL
-```
-
-#### Asignación de valores para materiales de casa
-```{r}
-f <- c("PConc", "CBlock", "BrkTil", "Slab", "Stone")
-
-for(n in 1:length(f)) {
-  # Variable minuscula para nuestro uso.
-  data$foundation[data$Foundation == f[n]] <- n
-}
-data$Foundation <- NULL
-```
-
-#### Asignación de valores para condicion de venta
-```{r}
-sc <- c("Abnorml", "AdjLand", "Alloca", "Family", "Normal", "Partial")
-
-for(n in 1:length(sc)) {
-  # Variable minuscula para nuestro uso.
-  data$saleCondition[data$SaleCondition == sc[n]] <- n
-}
-data$SaleCondition <- NULL
-```
-
-#### Asignación de valores para tipo de venta
-```{r}
 tv <- c("WD", "Oth", "New", "ConLw", "ConLI", "ConLD", "Con", "CWD", "COD")
 
 for(n in 1:length(tv)) {
   # Variable minuscula para nuestro uso.
   data$saleType[data$SaleType == tv[n]] <- n
 }
-data$SaleType <- NULL
+columns_used <- append(columns_used, "saleType")
+
+msz <- c("FV", "RL", "RH", "RM" , "C (all)")
+
+for(n in 1:length(msz)) {
+  # Variable minuscula para nuestro uso.
+  data$mSZoning[data$MSZoning == msz[n]] <- n
+}
+columns_used <- append(mSZoning, "saleType")
+
 ```
-
-
 
 ### Borrando valores inneceesarios
 
