@@ -17,6 +17,7 @@ library(cluster)
 library(factoextra)
 require(caret)
 library(corrplot)
+library(Metrics)
 
 ```
 
@@ -431,6 +432,36 @@ set.seed(5)
 ### Modelo univariable
 
 ### Modelo multivariable
+Utilizamos todas las variables como una primera aproximación.
+
+```{r}
+allVariablesModel <- lm(salePrice ~ ., data=trainingSet)
+summary(allVariablesModel)
+```
+El valor de R cuadrado con este modelo es de `0.8231`. Un valor arriba de 0.7 es considerado bueno para problemas de correlación. (Fernando, 2021) https://www.investopedia.com/terms/r/r-squared.asp#:~:text=In%20finance%2C%20an%20R%2DSquared,depend%20on%20the%20specific%20analysis.
+AGREGAR REFERERNCIAS
+
+Prediciendo valores con este modelo
+
+``` {r}
+prediction <- predict(allVariablesModel, testingSet, type="response")
+model_output <- cbind(testingSet, prediction)
+```
+
+Observando primeros valores de la predicción
+
+```{r}
+head(model_output[,c("salePrice", "prediction")])
+```
+
+```{r}
+complete_predicted <- na.omit(model_output)
+rmseAllVariables <- rmse(complete_predicted$salePrice,complete_predicted$prediction)
+```
+
+Ahora el valor del RMSE es `{r rmseAllVariables}`
+
+#### Representando gráficamente el modelo
 
 
 
@@ -454,6 +485,8 @@ Evaluación Visual de Tendencia de la data
 data_dist <- dist(data[,1:4])
 fviz_dist(data_dist, show_labels=F)
 ```
+
+
 
 
 
