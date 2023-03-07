@@ -17,7 +17,14 @@ library(cluster)
 library(factoextra)
 require(caret)
 library(corrplot)
-
+library(hopkins)
+library(e1071)
+library(mclust)
+library(fpc) 
+library(NbClust) 
+library(GGally)
+library(FeatureImpCluster)
+library(pheatmap)
 ```
 
 ```{r confi dplyr}
@@ -444,16 +451,60 @@ important_cols <- c("YrSold", "SalePrice", "YearBuilt", "YearRemodAdd", "PoolAre
 cols_num_norm <- data[,important_cols] <- mutate_if(data[,important_cols], is.numeric, scale)
 ```
 
+``` {r}
+
+```
+
 Resumen de las columnas a utilizar para llevar a cabo el clustering
 ```{r}
 print(summary(data[,important_cols]))
 ```
 
-Evaluación Visual de Tendencia de la data
+## Hopkins
+```{r}
+set.seed(123)
+hopkins(data[, important_cols], m=1400)
+```
+
+El resultado es de 0.9999868, el cual indica una tendencia a clustering alta ya que es un valor cerca a 1.
+
+## Evaluación Visual de Tendencia de la data (VAT)
 ``` {r}
-data_dist <- dist(data[,1:4])
+data_dist <- dist(data[, important_cols])
 fviz_dist(data_dist, show_labels=F)
 ```
 
+### Determinar numero optimo de clusters
+
+```{r kmedias}
+cols_num_norm_w <- na.omit(cols_num_norm)
+fviz_nbclust(cols_num_norm_w, kmeans, method = "gap")
+fviz_nbclust(cols_num_norm_ww, kmeans, method = "silhouette")
+```
+
+El numero optimo de clusters es 4
+
+``` {r}
+number_clusters <- 4
+```
+
+### K-Means para clustering
+
+``` {r}
+km <- kmeans(cols_num_norm_w, centers = number_clusters, iter.max = 100)
+km$size
+```
 
 
+``` {r}
+fviz_cluster(km, cols_num_norm_w)
+```
+
+
+### Clustering Jerarquico
+
+``` {r}
+hc<-hclust(data_dist, method = "ward.D2")
+plot(hc, cex=0.5, axes=FALSE)
+rect.hclust(hc,k=number_clusters)
+```
