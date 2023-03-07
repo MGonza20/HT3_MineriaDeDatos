@@ -483,10 +483,6 @@ important_cols <- c("YrSold", "SalePrice", "YearBuilt", "YearRemodAdd", "PoolAre
 cols_num_norm <- data[,important_cols] <- mutate_if(data[,important_cols], is.numeric, scale)
 ```
 
-``` {r}
-
-```
-
 Resumen de las columnas a utilizar para llevar a cabo el clustering
 ```{r}
 print(summary(data[,important_cols]))
@@ -511,7 +507,7 @@ fviz_dist(data_dist, show_labels=F)
 ```{r kmedias}
 cols_num_norm_w <- na.omit(cols_num_norm)
 fviz_nbclust(cols_num_norm_w, kmeans, method = "gap")
-fviz_nbclust(cols_num_norm_ww, kmeans, method = "silhouette")
+#fviz_nbclust(cols_num_norm_ww, kmeans, method = "silhouette")
 ```
 
 El numero optimo de clusters es 4
