@@ -437,7 +437,89 @@ set.seed(5)
 ```
 
 
-### 7. Modelo univariable
+###7. Modelo univariable
+Conjunto de entrenamiento (`r nrow(train)` muestras):  
+```{r echo=FALSE}
+head(trainingSet)
+```
+
+Conjunto de prueba (`r nrow(test)` muestras):  
+```{r echo=FALSE}
+head(testingSet)
+```
+
+### Estimación de precio usando el año de construcción de la casa 
+
+yearBuilt se toma como la variable independiente y se utiliza para hacer el modelo univariado de regresión lineal para
+predecir el precio de las casas.
+```{r}
+singleVariableModel <- lm(salePrice~yearBuilt, data = trainingSet)
+```
+
+Caracteristicas del modelo univariado entrenado:
+```{r}
+summary(singleVariableModel)
+```
+Los coeficientes en este modelo son significativos. Además podemos saber en base a estos datos que hay una relación significativa entre salePrice y yearBuilt en el conjunto de datos de entrenamiento. Sin embargo $R^2$ es considerado bajo, por tanto el modelo logra explicar una pequeña cantidad de la variación en salePrice.
+
+
+Ecuación de regresión:
+$salePrice = `r round(singleVariableModel$coefficients[2],2)`yearBuilt + `r round(singleVariableModel$coefficients[1],2)`$  
+
+```{r}
+ggplot(data = trainingSet, mapping = aes(x = yearBuilt, y = salePrice)) +
+geom_point(color = "green", size = 2) +
+geom_smooth(method = "lm", se = TRUE) +
+labs(title = "Precio de venta vs Año de construcción", x = "Año de construcción", y = "Precio de venta") +
+theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+```
+
+### Analisis de residuales
+Ecuación para predecir el precio de venta para el conjunto de prueba.  
+```{r}
+predSP<-predict(singleVariableModel, newdata = testingSet)
+```
+
+Predición:  
+```{r} 
+head(predSP)
+length(predSP)
+```
+Valores de los residuos del modelo.
+```{r}
+head(singleVariableModel$residuals)
+```
+### Gráficos para analizar residuales
+```{r}
+plot(singleVariableModel)
+```
+En el gráfico ***Residuals vs Fitted*** se puede ver que hay un leve patrón.
+
+Chequeo de distribución aleatoria de los puntos:
+```{r}
+hist(singleVariableModel$residuals)
+boxplot(singleVariableModel$residuals)
+```
+Según los gráficos no se puede establecer que haya una distribución normal. Dado que en el histograma la gráfica no tiene una distribución normal y las columnas están hacia la izquierda. Respecto al qqplot los datos están alejados del centro.
+
+
+```{r}
+library(nortest)
+lillie.test(singleVariableModel$residuals)
+```
+
+### Hallando el precio de venta para el conjunto de prueba  
+```{r}
+predPS <-predict(singleVariableModel, newdata = testingSet[,c(1,2,4)])
+library(caret)
+RMSE(singleVariableModel,testingSet$priceSale)
+```
+
+```{r}
+plot(singleVariableModel$priceSale,col="blue")
+points(singleVariableModel, col="red")
+```
+
 
 ### 8. Modelo multivariable
 Utilizamos todas las variables como una primera aproximación.
