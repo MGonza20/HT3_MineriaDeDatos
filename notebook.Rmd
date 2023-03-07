@@ -18,6 +18,7 @@ library(factoextra)
 require(caret)
 library(corrplot)
 library(Metrics)
+library(boot)
 
 library(hopkins)
 library(e1071)
@@ -27,6 +28,7 @@ library(NbClust)
 library(GGally)
 library(FeatureImpCluster)
 library(pheatmap)
+library(ggplot2)
 ```
 
 ```{r confi dplyr}
@@ -37,7 +39,7 @@ options(dplyr.summarise.inform = FALSE)
 data <- read.csv("train.csv")
 ```
 
-## Análisis Exploratorio
+## 2. Análisis Exploratorio
 
 ### ¿Cuál es la Zona más cara?
 
@@ -225,8 +227,6 @@ Pero desde 2010 este fue en bajando.
 
 ### Preprocesamiento de datos
 
-
-
 ```{r neihborhood values}
 columns_used <- c()
 neighborhoodNames <- c("NoRidge", "NridgHt", "StoneBr", "Timber", "Veenker", "Somerst", "ClearCr", "Crawfor", "CollgCr", "Blmngtn", "Gilbert", "NWAmes", "SawyerW", "Mitchel", "NAmes", "NPkVill", "SWISU", "Blueste", "Sawyer", "OldTown", "Edwards", "BrkSide", "BrDale", "IDOTRR", "MeadowV")
@@ -377,7 +377,7 @@ cleanData <- subset(data, select = columns_used)
 ```
 
 
-### Dividiendo los datos en entrenamiento y prueba
+## 4. Dividiendo los datos en entrenamiento y prueba
 Dividimos el test de datos en un 75% para entrenamiento y un 25% para pruebas. Utilizamos el metodo de bootstraping porque nos asegura que la distribución de la data toma en cuenta la población total. Es decir, no tendremos un sesgo genrado por cómo la información está organizada.
 ``` {r}
 set.seed(5)
@@ -390,7 +390,7 @@ trainingSet <- cleanData[partition,]
 testingSet <- cleanData[-partition,]
 ```
 
-### Ingeniería de los Datos
+## 5. Ingeniería de los Datos
 
 Visualizamos la matriz de correlación para ver tendencias en la data.
 ```{r}
@@ -431,16 +431,17 @@ Tomando este análisis en cuenta, se utilizarán las siguientes variables como c
 - pool - Una piscina aumenta el precio dado que el cliente debe tener presupuesto para mantenerla.
 - fireplace - en Iowa (lugar del dataset) hay inviernos con nieve, los clientes agradecerán esta comodidad
 
-### Asegurando resultados consistentes
+## 6. Asegurando resultados consistentes
 ```{r}
 set.seed(5)
 ```
 
 
-### Modelo univariable
+### 7. Modelo univariable
 
-### Modelo multivariable
+### 8. Modelo multivariable
 Utilizamos todas las variables como una primera aproximación.
+
 
 ```{r}
 allVariablesModel <- lm(salePrice ~ ., data=trainingSet)
@@ -462,15 +463,68 @@ Observando primeros valores de la predicción
 head(model_output[,c("salePrice", "prediction")])
 ```
 
+
+```{r}
+plot(allVariablesModel)
+```
+La gráfica de Residuales vs Fitted no presenta los valores distribuídos aleatoriamente de manera horizontal centrados en `y=0`. Sin embargo, tampoco está del todo mal si consideramos el valor de R cuadrado. La gráfica `Q-Q` también nos da información útil: paraece que los valores se aproximan a una línea recta entre los cuartiles teóricos -2 y 2.
+
+
 ```{r}
 complete_predicted <- na.omit(model_output)
 rmseAllVariables <- rmse(complete_predicted$salePrice,complete_predicted$prediction)
 ```
 
-Ahora el valor del RMSE es `{r rmseAllVariables}`
+El valor del RMSE es `49481.26`.
 
-#### Representando gráficamente el modelo
 
+### 9. Analizando el modelo
+
+Graficamos la matríz de correlación para todas las variables del modelo.
+
+```{r}
+
+modelCorrelations <- cor(model_output, method="pearson")
+modelCorrelations[is.na(modelCorrelations)] <- 0
+
+corrplot(modelCorrelations, type="upper", order="hclust", tl.col="black", tl.srt=45)
+
+```
+
+
+En el resumen generado arriba se puede observar que las variables más significativas son: neighborhood, remodelated, roofStyle, overallQuality, overallCondition, garageArea, pool, livingArea, yearBuilt.
+
+La gráfica de los valores ajustados vs los residuales nos indica que el modelo puede tener un problema de overfitting. Es decir, no logrará generalizar correctamente los valores del set te prueba.
+
+### 10. Modelo con variables significativas
+```{r}
+
+newMultivariableModel <- lm(salePrice ~ neighborhood + remodelated + roofStyle + overallQuality + overallCondition + garageArea + livingArea + yearBuilt, data=trainingSet)
+summary(newMultivariableModel)
+```
+
+```{r}
+plot(newMultivariableModel)
+```
+
+La reducción de variables disminuyó el sobreajuste. Sin embargo, también disminuyó el valor de R cuadrado a 0.81. Hay que tomar en cuenta que esto es para los datos de entrenamiento, así que pondremos a prueba al modelo:
+``` {r}
+newModelPrediction <- predict(newMultivariableModel, testingSet, type="response")
+newModelOutput <- cbind(testingSet, newModelPrediction)
+```
+
+Observando primeros valores de la predicción
+
+```{r}
+head(newModelOutput[,c("salePrice", "newModelPrediction")])
+```
+
+```{r}
+completeNewModelPredicted <- na.omit(newModelOutput)
+rmseNewModel <- rmse(completeNewModelPredicted$salePrice,completeNewModelPredicted$newModelPrediction)
+```
+
+El valor del RMSE es `45207.99`. Lo cuál es menor al valor del modelo anterior (49481.26). Esto es un indicador que el nuevo modelo es mejor generalizando la información.
 
 
 ### Clustering
