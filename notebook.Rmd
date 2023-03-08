@@ -606,7 +606,7 @@ allVariablesModel <- lm(salePrice ~ ., data=trainingSet)
 summary(allVariablesModel)
 ```
 El valor de R cuadrado con este modelo es de `0.8231`. Un valor arriba de 0.7 es considerado bueno para problemas de correlación. (Fernando, 2021) https://www.investopedia.com/terms/r/r-squared.asp#:~:text=In%20finance%2C%20an%20R%2DSquared,depend%20on%20the%20specific%20analysis.
-AGREGAR REFERERNCIAS
+
 
 Prediciendo valores con este modelo
 
@@ -685,7 +685,36 @@ rmseNewModel <- rmse(completeNewModelPredicted$salePrice,completeNewModelPredict
 El valor del RMSE es `45207.99`. Lo cuál es menor al valor del modelo anterior (49481.26). Esto es un indicador que el nuevo modelo es mejor generalizando la información.
 
 
+## 11. Modelos con conjunto de pruebas
 
+### Modelo 1 - Univariable
+```{r}
+svmodel7 <- lm(salePrice~livingArea, data = testingSet)
+```
+
+### Caracteristicas del modelo univariado entrenado:
+```{r}
+summary(svmodel7)
+```
+Podemos ver que $R^2$ (0.46) es más bajo que cuando se utilizó el conjunto de entrenamiento ($R^2$) por tanto la eficiencia del algoritmo para predecir el precio de las casas es menor y la regresión lineal se acopla de menor forma al conjunto de datos.
+
+### Modelo 2 - Multivariable
+
+```{r}
+allVM8 <- lm(salePrice ~ ., data=testingSet)
+summary(allVM8)
+```
+El valor de $R^2$ con este modelo es de `0.75` y aunque es menor a cuando se utilzó el conjunto de entrenamiento ($R^2$ = 0.8231) Aún es considerado aceptable para problemas de correlación. (Fernando, 2021) https://www.investopedia.com/terms/r/r-squared.asp#:~:text=In%20finance%2C%20an%20R%2DSquared,depend%20on%20the%20specific%20analysis.
+
+### Modelo 3 - Multivariable con variables significativas
+```{r}
+allVM10 <- lm(salePrice ~ neighborhood + remodelated + roofStyle + overallQuality + overallCondition + garageArea + livingArea + yearBuilt, data=testingSet)
+summary(allVM10)
+```
+En este caso a pesar de $R^2$ (0.72) aún es considerado aceptable para problemas de correlación (Fernando, 2021) su valor fue reducido considerablemente vs si se hubiera hecho con el conjunto de datos de entrenamiento (0.81).
+https://www.investopedia.com/terms/r/r-squared.asp#:~:text=In%20finance%2C%20an%20R%2DSquared,depend%20on%20the%20specific%20analysis.
+
+Es posible concluir que para los modelos tanto univariables como multivariables la eficiencia del modelo se ve reducida y un menor $R^2$ nos indica que el modelo que el modelo se ajusta menos a los datos y por tanto hay una menor precisión en la predicción de los datos.
 
 
 ## 12. Efectividad de modelos
