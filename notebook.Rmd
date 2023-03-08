@@ -506,6 +506,8 @@ set.seed(5)
 
 
 ##7. Modelo univariable
+
+## Modelo univariable 1
 Conjunto de entrenamiento (`r nrow(train)` muestras):  
 ```{r echo=FALSE}
 head(trainingSet)
@@ -517,9 +519,7 @@ head(testingSet)
 ```
 
 ### Estimación de precio usando el año de construcción de la casa 
-
-yearBuilt se toma como la variable independiente y se utiliza para hacer el modelo univariado de regresión lineal para
-predecir el precio de las casas.
+yearBuilt se toma como la variable independiente y se utiliza para hacer el modelo univariado de regresión lineal para predecir el precio de las casas.
 ```{r}
 singleVariableModel <- lm(salePrice~yearBuilt, data = trainingSet)
 ```
@@ -557,6 +557,7 @@ Valores de los residuos del modelo.
 ```{r}
 head(singleVariableModel$residuals)
 ```
+
 ### Gráficos para analizar residuales
 ```{r}
 plot(singleVariableModel)
@@ -587,6 +588,48 @@ RMSE(singleVariableModel,testingSet$priceSale)
 plot(singleVariableModel$priceSale,col="blue")
 points(singleVariableModel, col="red")
 ```
+
+## Modelo univariable 2
+### Estimación de precio usando el area de vivienda
+yearBuilt se toma como la variable independiente y se utiliza para hacer el modelo univariado de regresión lineal para predecir el precio de las casas.
+```{r}
+singleVariableModel2 <- lm(salePrice~livingArea, data = trainingSet)
+```
+
+Caracteristicas del modelo univariado entrenado:
+```{r}
+summary(singleVariableModel2)
+```
+Los coeficientes en este modelo son significativos. Además se puede observar que el valor de $R^2$ es de 0.52 siendo considerablemente mayor al valor de $R^2$ que se obtuvo al usar la variable independiente yearBuilt, por tanto este modelo explica mejor los datos.
+
+Ecuación de regresión:
+$salePrice = `r round(singleVariableModel2$coefficients[2],2)`livingArea + `r round(singleVariableModel2$coefficients[1],2)`$  
+
+```{r}
+ggplot(data = trainingSet, mapping = aes(x = yearBuilt, y = livingArea)) +
+geom_point(color = "green", size = 2) +
+geom_smooth(method = "lm", se = TRUE) +
+labs(title = "Precio de venta vs Área de vivienda", x = "Año de construcción", y = "Área de vivienda") +
+theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+```
+
+### Analisis de residuales
+Ecuación para predecir el precio de venta para el conjunto de prueba.  
+```{r}
+predSP2<-predict(singleVariableModel2, newdata = testingSet)
+```
+
+### Predición
+```{r} 
+head(predSP2)
+length(predSP2)
+```
+### Valores de los residuos del modelo
+```{r}
+head(singleVariableModel2$residuals)
+```
+
+
 
 
 ## 8. Modelo multivariable
