@@ -596,7 +596,7 @@ yearBuilt se toma como la variable independiente y se utiliza para hacer el mode
 singleVariableModel2 <- lm(salePrice~livingArea, data = trainingSet)
 ```
 
-Caracteristicas del modelo univariado entrenado:
+### Caracteristicas del modelo univariado entrenado:
 ```{r}
 summary(singleVariableModel2)
 ```
@@ -606,10 +606,10 @@ Ecuación de regresión:
 $salePrice = `r round(singleVariableModel2$coefficients[2],2)`livingArea + `r round(singleVariableModel2$coefficients[1],2)`$  
 
 ```{r}
-ggplot(data = trainingSet, mapping = aes(x = yearBuilt, y = livingArea)) +
+ggplot(data = trainingSet, mapping = aes(x = livingArea, y = salePrice)) +
 geom_point(color = "green", size = 2) +
 geom_smooth(method = "lm", se = TRUE) +
-labs(title = "Precio de venta vs Área de vivienda", x = "Año de construcción", y = "Área de vivienda") +
+labs(title = "Precio de venta vs Área de vivienda", x = "Área de vivienda", y = "Precio de venta") +
 theme_bw() + theme(plot.title = element_text(hjust = 0.5))
 ```
 
@@ -629,6 +629,45 @@ length(predSP2)
 head(singleVariableModel2$residuals)
 ```
 
+### Gráficos para analizar residuales
+```{r}
+plot(singleVariableModel2)
+```
+En el gráfico ***Residuals vs Fitted*** se puede ver que los datos se encuentran distribuidos de forma aleatoria alrededor de 0 y no siguen un patrón específicamente.
+
+
+### Chequeo de distribución aleatoria de los puntos:
+```{r}
+hist(singleVariableModel2$residuals)
+boxplot(singleVariableModel2$residuals)
+qqnorm(singleVariableModel2$residuals)
+qqline(singleVariableModel2$residuals, col="red")
+```
+Según los gráficos se puede observar que en el histograma obtenido se tiene una forma relativamente normal, por otra parte en el gráfico q-q los extremos se alejan moderadamente de la línea y en la caja de bigotes se observa que hay varios datos que se encuentran en los extremos, por tanto nos indica que los datos se encuentran en un rango normal.
+
+
+```{r}
+library(nortest)
+lillie.test(singleVariableModel2$residuals)
+```
+Haciendo una prueba de normalidad el valor de p es mayor que 0.05 por tanto no se rechaza la hipótesis nula de normalidad y se puede afirmar que los residuos siguen una distribución normal.
+
+
+### Precio de venta para el conjunto de prueba
+```{r}
+predSPP2<-predict(singleVariableModel2, newdata = testingSet[,c(1,2,4)])
+library(caret)
+RMSE(predSPP2,testingSet$salePrice)
+```
+
+```{r}
+plot(testingSet$priceSale,col="blue")
+points(predSPP2, col="red")
+```
+
+```{r}
+summary(testingSet$priceSale-predSPP2)
+```
 
 
 
