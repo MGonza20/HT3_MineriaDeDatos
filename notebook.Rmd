@@ -505,15 +505,15 @@ set.seed(5)
 ```
 
 
-##7. Modelo univariable
+## 7. Modelo univariable
 
 ## Modelo univariable 1
-Conjunto de entrenamiento (`r nrow(train)` muestras):  
+Conjunto de entrenamiento (`r nrow(trainingSet)` muestras):  
 ```{r echo=FALSE}
 head(trainingSet)
 ```
 
-Conjunto de prueba (`r nrow(test)` muestras):  
+Conjunto de prueba (`r nrow(testingSet)` muestras):  
 ```{r echo=FALSE}
 head(testingSet)
 ```
@@ -579,14 +579,12 @@ lillie.test(singleVariableModel$residuals)
 
 ### Hallando el precio de venta para el conjunto de prueba  
 ```{r}
-predPS <-predict(singleVariableModel, newdata = testingSet[,c(1,2,4)])
+predPS <-predict(singleVariableModel, newdata = testingSet[,])
 library(caret)
-RMSE(singleVariableModel,testingSet$priceSale)
 ```
 
-```{r}
-plot(singleVariableModel$priceSale,col="blue")
-points(singleVariableModel, col="red")
+```{rplot(singleVariableModel$priceSale,col="blue")
+  #points(singleVariableModel, col="red")
 ```
 
 ## Modelo univariable 2
@@ -619,7 +617,7 @@ Ecuación para predecir el precio de venta para el conjunto de prueba.
 predSP2<-predict(singleVariableModel2, newdata = testingSet)
 ```
 
-### Predición
+### Predicción
 ```{r} 
 head(predSP2)
 length(predSP2)
@@ -655,7 +653,7 @@ Haciendo una prueba de normalidad el valor de p es mayor que 0.05 por tanto no s
 
 ### Precio de venta para el conjunto de prueba
 ```{r}
-predSPP2<-predict(singleVariableModel2, newdata = testingSet[,c(1,2,4)])
+predSPP2<-predict(singleVariableModel2, newdata = testingSet[,])
 library(caret)
 RMSE(predSPP2,testingSet$salePrice)
 ```
@@ -685,14 +683,14 @@ AGREGAR REFERERNCIAS
 Prediciendo valores con este modelo
 
 ``` {r}
-prediction <- predict(allVariablesModel, testingSet, type="response")
-model_output <- cbind(testingSet, prediction)
+predictionAllVariables <- predict(allVariablesModel, testingSet, type="response")
+allVariablesOutput <- cbind(testingSet, predictionAllVariables)
 ```
 
 Observando primeros valores de la predicción
 
 ```{r}
-head(model_output[,c("salePrice", "prediction")])
+head(allVariablesOutput[,c("salePrice", "predictionAllVariables")])
 ```
 
 
@@ -703,7 +701,7 @@ La gráfica de Residuales vs Fitted no presenta los valores distribuídos aleato
 
 
 ```{r}
-complete_predicted <- na.omit(model_output)
+complete_predicted <- na.omit(allVariablesOutput)
 rmseAllVariables <- rmse(complete_predicted$salePrice,complete_predicted$prediction)
 ```
 
@@ -757,5 +755,47 @@ rmseNewModel <- rmse(completeNewModelPredicted$salePrice,completeNewModelPredict
 ```
 
 El valor del RMSE es `45207.99`. Lo cuál es menor al valor del modelo anterior (49481.26). Esto es un indicador que el nuevo modelo es mejor generalizando la información.
+
+
+## 12. Efectividad de modelos
+
+
+```{r echo = FALSE, result = 'asis'}
+firstColumn <- c( 0.52, 0.8231,  0.813)
+
+dataSource <- data.frame(modelo = c("Lineal", "Multivariable", "Multivariable Significativas"), rCuadrado=firstColumn)
+
+kable(dataSource)
+
+```
+
+ El valor de R cuadrado pareciera ser mejor en el modelo Multivariable que usa todas las variables numérics. Sin embargo, hay que tomar en cuenta que esta medida es para el set de entrenamiento. Si se observa el análisis de residuales para ese modelo se ve que este está sobreajustado.
+ 
+#### Graficando Modelo Univariable (con LivingArea)
+``` {r echo = FALSSE}
+plot(testingSet$salePrice,col="blue", ylab="SalePrice", xlab="Observacion")
+points( predSP2, col="red")
+```
+ 
+#### Graficando Modelo Multivariable 
+ 
+``` {r echo = FALSSE}
+plot(testingSet$salePrice,col="blue", ylab="SalePrice", xlab="Observacion")
+points(predictionAllVariables, col="red")
+```
+ En azul tenemos el precio correcto y en rojo los valores predecidos para ese mismo conjunto de datos. Podemos observar que el modelo no es muy bueno generalizando precios muy altos. Lo cuál confirma la forma que se ve en la gráfica de residuales.
+ 
+
+#### Graficando Modelo Multivariable con variables significativas
+
+``` {r echo = FALSSE}
+plot(testingSet$salePrice,col="blue", ylab="SalePrice", xlab="Observacion")
+points(newModelPrediction, col="red")
+```
+Este modelo a pesar de ser parecido al anterior puede generaizar mejor los valores de prueba. Esto se ve claramente en las observaciones con precios bajos.
+
+Por otro lado, al comparar el RMSE de los modelos (62571.91, 49481.26 y 45207.99), obtenemos que el tercero tiene un menor valor, es decir, es un indicador que es mejor generalizando los resultados. 
+
+En conclusión, el modelo que mejor generaliza los precios de las casas es el modelo multivariable que utiliza únicamente las variables importantes: neighborhood, remodelated, roofStyle, overallQuality, overallCondition, garageArea, pool, livingArea, yearBuilt. Hay que tomar en cuenta que podríamos tener mejores resultados utilizando un modelo polinómico en vez de lineal porque algunas características, como livingArea no crecen de forma lineal.
 
 
