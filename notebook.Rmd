@@ -150,17 +150,22 @@ kable(grouped_type[0:5,], caption = "Conteo de tipo de casas")
 
 ```
 
-### ¿Cómo varia el precio de las casas según el vecindario en que se encuentran?
+### ¿Que vecindarios tienen un mayor rango de precios?
 
 ```{r}
-grouped_data <- data %>% group_by(Neighborhood)
-agg_tbl <- grouped_data %>% summarise(mean(SalePrice))
-grouped_dataset <- as.data.frame(agg_tbl)
-colnames(grouped_dataset)[colnames(grouped_dataset) == "Neighborhood"] ="Vecindario"
-colnames(grouped_dataset)[colnames(grouped_dataset) == "mean(SalePrice)"] ="Promedio de Precio (USD)"
-grouped_dataset <- grouped_dataset[order(grouped_dataset$`Promedio de Precio (USD)`, decreasing = TRUE), ]
-kable(grouped_dataset, caption = "Promedio de ventas por cada vecindario")
+
+grouped_data <- data %>% group_by(Neighborhood) %>% summarise(minPrice = min(salePrice), maxPrice = max(salePrice))
+grouped <- grouped_data %>% mutate(priceRange = maxPrice - minPrice) %>% arrange(desc(priceRange))
+
+colnames(grouped)[colnames(grouped) == "Neighborhood"] = "Vecindario"
+colnames(grouped)[colnames(grouped) == "minPrice"] = "Precio Mínimo (USD)"
+colnames(grouped)[colnames(grouped) == "maxPrice"] = "Precio Máximo (USD)"
+colnames(grouped)[colnames(grouped) == "priceRange"] = "Rango de Precios (USD)"
+
+kable(head(grouped, 3), caption = "Top 3 - Vecindarios con mayor rango de precios")
+
 ```
+Los vecindarios con mayor rango de precios son NoRidge, NridgHt y OldTown. Se puede observar que el rango de precios de NridgHt y OldTown es similar, sin embargo es necesario tomar en cuenta que el precio mínimo de OldTown es mucho menor al de NridgHt.
 
 
 ### ¿Cuál proporción de casas en cada zona?
