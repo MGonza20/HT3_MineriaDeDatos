@@ -162,14 +162,16 @@ grouped_dataset <- grouped_dataset[order(grouped_dataset$`Promedio de Precio (US
 kable(grouped_dataset, caption = "Promedio de ventas por cada vecindario")
 ```
 
-### ¿Que proporción de casas se encuentra en cada zona?
 
+### ¿Cuál proporción de casas en cada zona?
 ```{r}
 zone_counts <- data %>% count(MSZoning) %>% mutate(Proporcion = prop.table(n) * 100) %>% 
 rename(Zona = MSZoning, Cantidad = n) %>% mutate(Proporcion = paste0(round(Proporcion, 2), "%")) %>%
-arrange(desc(Proporcion))
+arrange(desc(Cantidad))
 kable(zone_counts, caption = "Proporción de casas por zona")
 ```
+Se puede observar que la zona en donde hay mayor proporción de casas es la zona RL, seguido de RM tomando en cuenta que la proporción de casas en esta zona es considerablemente menor así como en las zonas FV, RH y C(all).
+
 
 ### ¿Cuáles son las características más comunes de las casas que se venden por encima del precio medio?
 
@@ -182,7 +184,7 @@ ggplot(data = houses_mean_above, aes(x = HouseStyle)) +geom_bar()
 ggplot(data = houses_mean_above, aes(x = GarageType)) +geom_bar()
 ```
 
-Las características más comunes son las siguientes: 1) Zona donda se
+Las características más comunes son las siguientes: 1) Zona donde se
 ubica las casas: RL (Casa residencial de baja densidad) 2) Tipo de
 vivienda: 1Fam (Unifamiliar) 3) Estilo de la casa: 1Story (Un nivel) 4)
 Tipo de Garaje: Attchd (Adjuntada a la casa)
@@ -202,8 +204,7 @@ tapply(data$SalePrice, data$GarageType=="NA", mean)
 
 1453 casas tienen psicina 1379 casas cuentan con garaje
 
-Como se puede ver si influyen la relación con el precio, las psicinas
-suelen elevar el precio de las casas
+Como se puede ver si influyen la relación con el precio, las piscinas suelen elevar el precio de las casas
 
 ### ¿Cómo se distribuyen las ventas de casas a lo largo del tiempo entre los diferentes periodos?
 
