@@ -577,19 +577,31 @@ library(nortest)
 lillie.test(singleVariableModel$residuals)
 ```
 
+```{r}
+summary(testingSet)
+```
+
+
 ### Hallando el precio de venta para el conjunto de prueba  
 ```{r}
-predPS <-predict(singleVariableModel, newdata = testingSet[,])
+predPS <-predict(singleVariableModel, newdata = testingSet[,c(20,21)])
 library(caret)
+RMSE(predSPP2,testingSet$salePrice)
 ```
 
-```{rplot(singleVariableModel$priceSale,col="blue")
-  #points(singleVariableModel, col="red")
+```{r}
+plot(testingSet$salePrice,col="blue")
+points(predPS, col="red")
 ```
 
-## Modelo univariable 2
+```{r}
+summary(testingSet$salePrice-predPS)
+```
+
+
+## Modelo univariable 
 ### Estimación de precio usando el area de vivienda
-yearBuilt se toma como la variable independiente y se utiliza para hacer el modelo univariado de regresión lineal para predecir el precio de las casas.
+livingArea se toma como la variable independiente y se utiliza para hacer el modelo univariado de regresión lineal para predecir el precio de las casas.
 ```{r}
 singleVariableModel2 <- lm(salePrice~livingArea, data = trainingSet)
 ```
@@ -631,7 +643,7 @@ head(singleVariableModel2$residuals)
 ```{r}
 plot(singleVariableModel2)
 ```
-En el gráfico ***Residuals vs Fitted*** se puede ver que los datos se encuentran distribuidos de forma aleatoria alrededor de 0 y no siguen un patrón específicamente.
+En el gráfico ***Residuals vs Fitted*** se puede ver que los datos se encuentran alrededor de 0 pero no de forma aleatoria especificamente ya que la mayor cantidad de puntos se centran en un lugar en específico.
 
 
 ### Chequeo de distribución aleatoria de los puntos:
@@ -641,31 +653,32 @@ boxplot(singleVariableModel2$residuals)
 qqnorm(singleVariableModel2$residuals)
 qqline(singleVariableModel2$residuals, col="red")
 ```
-Según los gráficos se puede observar que en el histograma obtenido se tiene una forma relativamente normal, por otra parte en el gráfico q-q los extremos se alejan moderadamente de la línea y en la caja de bigotes se observa que hay varios datos que se encuentran en los extremos, por tanto nos indica que los datos se encuentran en un rango normal.
+Según los gráficos se puede observar que en el histograma obtenido no tiene una forma normal, ya que los datos se encuentran distribuidos hacia la derecha. Por otra parte en el gráfico q-q los extremos se alejan de la línea y en la caja de bigotes se observa que hay varios datos que se encuentran en los extremos.
 
 
 ```{r}
 library(nortest)
 lillie.test(singleVariableModel2$residuals)
 ```
-Haciendo una prueba de normalidad el valor de p es mayor que 0.05 por tanto no se rechaza la hipótesis nula de normalidad y se puede afirmar que los residuos siguen una distribución normal.
+Haciendo una prueba de normalidad el valor de p es menor que 0.05 por tanto la hipótesis nula de normalidad se rechaza y se afirma que los datos de los residuos no siguen una distribución normal. 
 
 
 ### Precio de venta para el conjunto de prueba
 ```{r}
-predSPP2<-predict(singleVariableModel2, newdata = testingSet[,])
+predSPP2<-predict(singleVariableModel2, newdata = testingSet[,c(19,21)])
 library(caret)
 RMSE(predSPP2,testingSet$salePrice)
 ```
 
 ```{r}
-plot(testingSet$priceSale,col="blue")
+plot(testingSet$salePrice,col="blue")
 points(predSPP2, col="red")
 ```
 
 ```{r}
-summary(testingSet$priceSale-predSPP2)
+summary(testingSet$salePrice-predSPP2)
 ```
+En base a los resultados anteriores no se puede afirmar que se tenga una buena distribución ya que el RMSE es bastante alto, los datos en el gráfico se encuentran principalmente en la parte inferior del gráfico y no en diagonal. Además, en el resumen de estadisticas no se encuentran alrededor de 0 y tienen valores muy altos.
 
 
 
