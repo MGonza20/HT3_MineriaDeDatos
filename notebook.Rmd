@@ -146,9 +146,11 @@ grouped_type <- as.data.frame(type_count)
 colnames(grouped_type)[colnames(grouped_type) == "BldgType"] ="Tipo de casa"
 colnames(grouped_type)[colnames(grouped_type) == "total_count"] ="Cantidad"
 grouped_type <- grouped_type[order(grouped_type$`Cantidad`, decreasing = TRUE), ]
-kable(grouped_type[0:5,], caption = "Conteo de tipo de casas")
+kable(grouped_type, caption = "Conteo de tipo de casas")
 
 ```
+Los tipo de casas más comunes son de 1 familia y de tipo town house.
+
 
 ### ¿Que vecindarios tienen un mayor rango de precios?
 
@@ -681,6 +683,9 @@ rmseNewModel <- rmse(completeNewModelPredicted$salePrice,completeNewModelPredict
 ```
 
 El valor del RMSE es `45207.99`. Lo cuál es menor al valor del modelo anterior (49481.26). Esto es un indicador que el nuevo modelo es mejor generalizando la información.
+
+
+
 
 
 ## 12. Efectividad de modelos
