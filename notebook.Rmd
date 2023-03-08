@@ -506,100 +506,6 @@ set.seed(5)
 
 
 ## 7. Modelo univariable
-
-## Modelo univariable 1
-Conjunto de entrenamiento (`r nrow(trainingSet)` muestras):  
-```{r echo=FALSE}
-head(trainingSet)
-```
-
-Conjunto de prueba (`r nrow(testingSet)` muestras):  
-```{r echo=FALSE}
-head(testingSet)
-```
-
-### Estimación de precio usando el año de construcción de la casa 
-yearBuilt se toma como la variable independiente y se utiliza para hacer el modelo univariado de regresión lineal para predecir el precio de las casas.
-```{r}
-singleVariableModel <- lm(salePrice~yearBuilt, data = trainingSet)
-```
-
-Caracteristicas del modelo univariado entrenado:
-```{r}
-summary(singleVariableModel)
-```
-Los coeficientes en este modelo son significativos. Además podemos saber en base a estos datos que hay una relación significativa entre salePrice y yearBuilt en el conjunto de datos de entrenamiento. Sin embargo $R^2$ es considerado bajo, por tanto el modelo logra explicar una pequeña cantidad de la variación en salePrice.
-
-
-Ecuación de regresión:
-$salePrice = `r round(singleVariableModel$coefficients[2],2)`yearBuilt + `r round(singleVariableModel$coefficients[1],2)`$  
-
-```{r}
-ggplot(data = trainingSet, mapping = aes(x = yearBuilt, y = salePrice)) +
-geom_point(color = "green", size = 2) +
-geom_smooth(method = "lm", se = TRUE) +
-labs(title = "Precio de venta vs Año de construcción", x = "Año de construcción", y = "Precio de venta") +
-theme_bw() + theme(plot.title = element_text(hjust = 0.5))
-```
-
-### Analisis de residuales
-Ecuación para predecir el precio de venta para el conjunto de prueba.  
-```{r}
-predSP<-predict(singleVariableModel, newdata = testingSet)
-```
-
-Predición:  
-```{r} 
-head(predSP)
-length(predSP)
-```
-Valores de los residuos del modelo.
-```{r}
-head(singleVariableModel$residuals)
-```
-
-### Gráficos para analizar residuales
-```{r}
-plot(singleVariableModel)
-```
-En el gráfico ***Residuals vs Fitted*** se puede ver que hay un leve patrón.
-
-Chequeo de distribución aleatoria de los puntos:
-```{r}
-hist(singleVariableModel$residuals)
-boxplot(singleVariableModel$residuals)
-```
-Según los gráficos no se puede establecer que haya una distribución normal. Dado que en el histograma la gráfica no tiene una distribución normal y las columnas están hacia la izquierda. Respecto al qqplot los datos están alejados del centro.
-
-
-```{r}
-library(nortest)
-lillie.test(singleVariableModel$residuals)
-```
-
-```{r}
-summary(testingSet)
-```
-
-
-### Hallando el precio de venta para el conjunto de prueba  
-```{r}
-predPS <-predict(singleVariableModel, newdata = testingSet[,c(20,21)])
-library(caret)
-RMSE(predSPP2,testingSet$salePrice)
-```
-
-```{r}
-plot(testingSet$salePrice,col="blue")
-points(predPS, col="red")
-```
-
-```{r}
-summary(testingSet$salePrice-predPS)
-```
-
-
-## Modelo univariable 
 ### Estimación de precio usando el area de vivienda
 livingArea se toma como la variable independiente y se utiliza para hacer el modelo univariado de regresión lineal para predecir el precio de las casas.
 ```{r}
@@ -610,7 +516,8 @@ singleVariableModel2 <- lm(salePrice~livingArea, data = trainingSet)
 ```{r}
 summary(singleVariableModel2)
 ```
-Los coeficientes en este modelo son significativos. Además se puede observar que el valor de $R^2$ es de 0.52 siendo considerablemente mayor al valor de $R^2$ que se obtuvo al usar la variable independiente yearBuilt, por tanto este modelo explica mejor los datos.
+Los coeficientes en este modelo son significativos. Sin embargo $R^2$ no es considerado alto, por tanto el modelo no logra explicar la variación en salePrice en su mayoria.
+
 
 Ecuación de regresión:
 $salePrice = `r round(singleVariableModel2$coefficients[2],2)`livingArea + `r round(singleVariableModel2$coefficients[1],2)`$  
@@ -619,7 +526,7 @@ $salePrice = `r round(singleVariableModel2$coefficients[2],2)`livingArea + `r ro
 ggplot(data = trainingSet, mapping = aes(x = livingArea, y = salePrice)) +
 geom_point(color = "green", size = 2) +
 geom_smooth(method = "lm", se = TRUE) +
-labs(title = "Precio de venta vs Área de vivienda", x = "Área de vivienda", y = "Precio de venta") +
+labs(title = "Precio de venta ~ Área de vivienda", x = "Área de vivienda", y = "Precio de venta") +
 theme_bw() + theme(plot.title = element_text(hjust = 0.5))
 ```
 
