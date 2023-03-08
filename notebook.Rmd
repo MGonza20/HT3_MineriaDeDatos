@@ -376,6 +376,74 @@ columns_used <- append(columns_used, "mSZoning")
 cleanData <- subset(data, select = columns_used)
 ```
 
+## 3. Clustering
+
+Agrupamiento de las columnas más importantes
+``` {r}
+# Definir las columnas más importantes
+important_cols <- c("YrSold", "SalePrice", "YearBuilt", "YearRemodAdd", "PoolArea", "GarageArea", "OverallQual", "OverallCond", "LotFrontage", "LotArea", "GarageCars")
+# Normalizar variables numericas
+cols_num_norm <- data[,important_cols] <- mutate_if(data[,important_cols], is.numeric, scale)
+```
+
+Resumen de las columnas a utilizar para llevar a cabo el clustering
+```{r}
+print(summary(data[,important_cols]))
+```
+
+### Hopkins
+```{r}
+set.seed(123)
+hopkins(data[, important_cols], m=1400)
+```
+
+El resultado es de 0.9999868, el cual indica una tendencia a clustering alta ya que es un valor cerca a 1.
+
+### Evaluación Visual de Tendencia de la data (VAT)
+``` {r}
+data_dist <- dist(data[, important_cols])
+fviz_dist(data_dist, show_labels=F)
+```
+
+Como se puede observar el método de hopkins esta en lo correcto y se puede confiar 
+en el resultado dado de VAT ya que muestra patrones de agrupamiento en general.
+
+### Determinar numero optimo de clusters
+
+```{r kmedias}
+cols_num_norm_w <- na.omit(cols_num_norm)
+fviz_nbclust(cols_num_norm_w, kmeans, method = "gap")
+```
+
+El numero optimo de clusters es 4
+
+``` {r}
+number_clusters <- 4
+```
+
+### K-Means para clustering
+
+``` {r}
+km <- kmeans(cols_num_norm_w, centers = number_clusters, iter.max = 100)
+km$size
+```
+
+``` {r}
+fviz_cluster(km, cols_num_norm_w)
+```
+
+Como se puede ver los datos si estan agrupados, él único que muestra un mínimo de 
+dispersión es el primer cluster (de color rojo)
+
+### Clustering Jerarquico
+
+``` {r}
+hc<-hclust(data_dist, method = "ward.D2")
+plot(hc, cex=0.5, axes=FALSE)
+rect.hclust(hc,k=number_clusters)
+```
+
+También se puede ver que los clusters estan agrupados. En efecto VAT estaba en lo correcto.
 
 ## 4. Dividiendo los datos en entrenamiento y prueba
 Dividimos el test de datos en un 75% para entrenamiento y un 25% para pruebas. Utilizamos el metodo de bootstraping porque nos asegura que la distribución de la data toma en cuenta la población total. Es decir, no tendremos un sesgo genrado por cómo la información está organizada.
@@ -437,7 +505,7 @@ set.seed(5)
 ```
 
 
-###7. Modelo univariable
+##7. Modelo univariable
 Conjunto de entrenamiento (`r nrow(train)` muestras):  
 ```{r echo=FALSE}
 head(trainingSet)
@@ -521,7 +589,7 @@ points(singleVariableModel, col="red")
 ```
 
 
-### 8. Modelo multivariable
+## 8. Modelo multivariable
 Utilizamos todas las variables como una primera aproximación.
 
 
@@ -560,7 +628,7 @@ rmseAllVariables <- rmse(complete_predicted$salePrice,complete_predicted$predict
 El valor del RMSE es `49481.26`.
 
 
-### 9. Analizando el modelo
+## 9. Analizando el modelo
 
 Graficamos la matríz de correlación para todas las variables del modelo.
 
@@ -578,7 +646,7 @@ En el resumen generado arriba se puede observar que las variables más significa
 
 La gráfica de los valores ajustados vs los residuales nos indica que el modelo puede tener un problema de overfitting. Es decir, no logrará generalizar correctamente los valores del set te prueba.
 
-### 10. Modelo con variables significativas
+## 10. Modelo con variables significativas
 ```{r}
 
 newMultivariableModel <- lm(salePrice ~ neighborhood + remodelated + roofStyle + overallQuality + overallCondition + garageArea + livingArea + yearBuilt, data=trainingSet)
@@ -609,64 +677,3 @@ rmseNewModel <- rmse(completeNewModelPredicted$salePrice,completeNewModelPredict
 El valor del RMSE es `45207.99`. Lo cuál es menor al valor del modelo anterior (49481.26). Esto es un indicador que el nuevo modelo es mejor generalizando la información.
 
 
-### Clustering
-
-Agrupamiento de las columnas más importantes
-``` {r}
-# Definir las columnas más importantes
-important_cols <- c("YrSold", "SalePrice", "YearBuilt", "YearRemodAdd", "PoolArea", "GarageArea", "OverallQual", "OverallCond", "LotFrontage", "LotArea", "GarageCars")
-# Normalizar variables numericas
-cols_num_norm <- data[,important_cols] <- mutate_if(data[,important_cols], is.numeric, scale)
-```
-
-Resumen de las columnas a utilizar para llevar a cabo el clustering
-```{r}
-print(summary(data[,important_cols]))
-```
-
-## Hopkins
-```{r}
-set.seed(123)
-hopkins(data[, important_cols], m=1400)
-```
-
-El resultado es de 0.9999868, el cual indica una tendencia a clustering alta ya que es un valor cerca a 1.
-
-## Evaluación Visual de Tendencia de la data (VAT)
-``` {r}
-data_dist <- dist(data[, important_cols])
-fviz_dist(data_dist, show_labels=F)
-```
-
-### Determinar numero optimo de clusters
-
-```{r kmedias}
-cols_num_norm_w <- na.omit(cols_num_norm)
-fviz_nbclust(cols_num_norm_w, kmeans, method = "gap")
-#fviz_nbclust(cols_num_norm_ww, kmeans, method = "silhouette")
-```
-
-El numero optimo de clusters es 4
-
-``` {r}
-number_clusters <- 4
-```
-
-### K-Means para clustering
-
-``` {r}
-km <- kmeans(cols_num_norm_w, centers = number_clusters, iter.max = 100)
-km$size
-```
-
-``` {r}
-fviz_cluster(km, cols_num_norm_w)
-```
-
-### Clustering Jerarquico
-
-``` {r}
-hc<-hclust(data_dist, method = "ward.D2")
-plot(hc, cex=0.5, axes=FALSE)
-rect.hclust(hc,k=number_clusters)
-```
