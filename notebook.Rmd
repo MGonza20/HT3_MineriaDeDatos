@@ -156,7 +156,7 @@ Los tipo de casas más comunes son de 1 familia y de tipo town house.
 
 ```{r}
 
-grouped_data <- data %>% group_by(Neighborhood) %>% summarise(minPrice = min(salePrice), maxPrice = max(salePrice))
+grouped_data <- data %>% group_by(Neighborhood) %>% summarise(minPrice = min(SalePrice), maxPrice = max(SalePrice))
 grouped <- grouped_data %>% mutate(priceRange = maxPrice - minPrice) %>% arrange(desc(priceRange))
 
 colnames(grouped)[colnames(grouped) == "Neighborhood"] = "Vecindario"
@@ -165,6 +165,7 @@ colnames(grouped)[colnames(grouped) == "maxPrice"] = "Precio Máximo (USD)"
 colnames(grouped)[colnames(grouped) == "priceRange"] = "Rango de Precios (USD)"
 
 kable(head(grouped, 3), caption = "Top 3 - Vecindarios con mayor rango de precios")
+
 
 ```
 Los vecindarios con mayor rango de precios son NoRidge, NridgHt y OldTown. Se puede observar que el rango de precios de NridgHt y OldTown es similar, sin embargo es necesario tomar en cuenta que el precio mínimo de OldTown es mucho menor al de NridgHt.
