@@ -643,7 +643,7 @@ Graficamos la matríz de correlación para todas las variables del modelo.
 
 ```{r}
 
-modelCorrelations <- cor(model_output, method="pearson")
+modelCorrelations <- cor(allVariablesOutput, method="pearson")
 modelCorrelations[is.na(modelCorrelations)] <- 0
 
 corrplot(modelCorrelations, type="upper", order="hclust", tl.col="black", tl.srt=45)
@@ -733,14 +733,14 @@ kable(dataSource)
  El valor de R cuadrado pareciera ser mejor en el modelo Multivariable que usa todas las variables numérics. Sin embargo, hay que tomar en cuenta que esta medida es para el set de entrenamiento. Si se observa el análisis de residuales para ese modelo se ve que este está sobreajustado.
  
 #### Graficando Modelo Univariable (con LivingArea)
-``` {r echo = FALSSE}
+``` {r echo = FALSE}
 plot(testingSet$salePrice,col="blue", ylab="SalePrice", xlab="Observacion")
 points( predSP2, col="red")
 ```
  
 #### Graficando Modelo Multivariable 
  
-``` {r echo = FALSSE}
+``` {r echo = FALSE}
 plot(testingSet$salePrice,col="blue", ylab="SalePrice", xlab="Observacion")
 points(predictionAllVariables, col="red")
 ```
@@ -749,7 +749,7 @@ points(predictionAllVariables, col="red")
 
 #### Graficando Modelo Multivariable con variables significativas
 
-``` {r echo = FALSSE}
+``` {r echo = FALSE}
 plot(testingSet$salePrice,col="blue", ylab="SalePrice", xlab="Observacion")
 points(newModelPrediction, col="red")
 ```
